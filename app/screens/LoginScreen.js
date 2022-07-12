@@ -4,11 +4,11 @@ import { StyleSheet, Text, TextInput, Image, View, TouchableOpacity } from 'reac
 import AppLoading from 'expo-app-loading';
 import {useFonts} from 'expo-font';
 
-export default function App() {
+const LoginScreen = ({ navigation }) => {
         
   let [fontsLoaded] = useFonts({
-  "InriaSans_400Regular": require("./app/assets/fonts/InriaSans_400Regular.ttf"),
-  "InriaSans_700Bold": require("./app/assets/fonts/InriaSans_700Bold.ttf"),
+  "InriaSans_400Regular": require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
+  "InriaSans_700Bold": require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
   });
 
 const [email, setEmail] = React.useState("");
@@ -25,7 +25,7 @@ if (!fontsLoaded) {
       <Image
       style={styles.logo}
 
-      source={require("./app/assets/logo.jpg")}/>
+      source={require("../assets/logo.jpg")}/>
 
       <Text
         style={[styles.headerText, styles.leftAlign]}>
@@ -61,7 +61,7 @@ if (!fontsLoaded) {
         style={styles.centerAlign}>
         <TouchableOpacity
           style={styles.loginButton}
-          onPress={() => console.log("Login Pressed")}>
+          onPress={() => navigation.navigate("RecipeScreen")}>
             <Text 
               style={styles.regularText}>
                 Login
@@ -75,7 +75,7 @@ if (!fontsLoaded) {
           </Text>
 
         <TouchableOpacity
-          onPress={() => console.log("Register Pressed")}>
+          onPress={() => navigation.navigate("RegisterScreen")}>
           <Text
             style={styles.regularText}>
               Register
@@ -136,3 +136,5 @@ const styles = StyleSheet.create({
     marginBottom: "15%",
   },
 });
+
+export default LoginScreen;

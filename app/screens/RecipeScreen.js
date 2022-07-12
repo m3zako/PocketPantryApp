@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   Switch,
 } from "react-native";
-import { Icon } from "react-native-elements";
+import { Icon } from "@rneui/themed";
 
 function RecipeButton(props) {
   const [isPressed, setPressed] = useState(false);

@@ -8,7 +8,7 @@ import {
   TouchableHighlight,
   Dimensions,
 } from "react-native";
-import { CheckBox } from "react-native-elements";
+import { CheckBox } from "@rneui/themed";
 
 function ShoppingCheckBoxListEntry(props) {
   const [isChecked, setChecked] = useState(false);

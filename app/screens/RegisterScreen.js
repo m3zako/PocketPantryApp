@@ -6,11 +6,11 @@ import {useFonts} from 'expo-font';
 
 
 
-export default function App() {
+const RegisterScreen = ({ navigation }) => {
 
 let [fontsLoaded] = useFonts({
-  "InriaSans_400Regular": require("./node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
-  "InriaSans_700Bold": require("./node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
+  "InriaSans_400Regular": require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
+  "InriaSans_700Bold": require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
   });
 
   const [email, setEmail] = React.useState("");
@@ -67,7 +67,7 @@ if (!fontsLoaded) {
         style={styles.centerAlign}>
         <TouchableOpacity
           style={styles.registerButton}
-          onPress={() => console.log("Register Pressed")}>
+          onPress={() => navigation.navigate("LoginScreen")}>
             <Text 
               style={styles.regularText}>
                 Register
@@ -125,6 +125,4 @@ const styles = StyleSheet.create({
   },
 });
 
-
-
-
+export default RegisterScreen;
