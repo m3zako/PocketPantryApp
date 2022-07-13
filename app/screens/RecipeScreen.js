@@ -12,8 +12,14 @@ import {
   Switch,
 } from "react-native";
 import { Icon } from "@rneui/themed";
+import { useFonts } from "expo-font";
 
 function RecipeButton(props) {
+  let [fontsLoaded] = useFonts({
+    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
+    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
+  });
+
   const [isPressed, setPressed] = useState(false);
   if (!isPressed) {
     return (
@@ -98,7 +104,7 @@ const RecipeScreen = ({ navigation }) => {
       >
         <Text
           style={{
-            fontWeight: "700",
+            fontFamily: "InriaSans_700Bold",
             fontSize: 48,
             marginLeft: "5%",
             marginTop: "7.5%",
@@ -184,25 +190,30 @@ const styles = StyleSheet.create({
     marginTop: "5%",
     elevation: 4,
   },
-  recipeButtonText: { fontSize: 30, marginRight: "30%", marginTop: "10.5%" },
+  recipeButtonText: {
+    fontSize: 30,
+    marginRight: "30%",
+    marginTop: "10.5%",
+    fontFamily: "InriaSans_400Regular",
+  },
   recipeName: {
     fontSize: 24,
-    fontWeight: "700",
+    fontFamily: "InriaSans_700Bold",
     textDecorationLine: "underline",
     marginLeft: "4%",
   },
   recipeDescription: {
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "InriaSans_700Bold",
     marginLeft: "4%",
     marginRight: "4%",
   },
   activeScreenText: {
     fontSize: 30,
-    fontWeight: "700",
+    fontFamily: "InriaSans_700Bold",
     alignSelf: "center",
   },
-  otherScreenText: { fontSize: 30 },
+  otherScreenText: { fontSize: 30, fontFamily: "InriaSans_400Regular" },
 });
 
 export default RecipeScreen;
