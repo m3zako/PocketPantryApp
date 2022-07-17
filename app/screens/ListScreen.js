@@ -9,6 +9,7 @@ import {
   Dimensions,
 } from "react-native";
 import { CheckBox } from "@rneui/themed";
+import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 
 function ShoppingCheckBoxListEntry(props) {
@@ -30,6 +31,10 @@ const ListScreen = ({ navigation }) => {
     InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
     InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
   });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>

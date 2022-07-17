@@ -12,6 +12,7 @@ import {
   Switch,
 } from "react-native";
 import { Icon } from "@rneui/themed";
+import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 
 function RecipeButton(props) {
@@ -19,6 +20,10 @@ function RecipeButton(props) {
     InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
     InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
   });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
 
   const [isPressed, setPressed] = useState(false);
   if (!isPressed) {
