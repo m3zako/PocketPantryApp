@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,8 +10,8 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Switch,
-} from "react-native";
-import { Icon } from "@rneui/themed";
+} from 'react-native';
+import { Icon } from '@rneui/themed';
 
 function RecipeButton(props) {
   const [isPressed, setPressed] = useState(false);
@@ -25,20 +25,20 @@ function RecipeButton(props) {
       >
         <View
           style={{
-            justifyContent: "space-between",
+            justifyContent: 'space-between',
             flex: 1,
-            flexDirection: "row",
+            flexDirection: 'row',
           }}
         >
           <Image
-            source={require("../assets/image-6.png")}
+            source={require('../assets/image-6.png')}
             style={{
-              resizeMode: "contain",
-              marginLeft: "-17.5%",
-              marginTop: "2.5%",
-              marginRight: "-15%",
-              width: "75%",
-              height: "85%",
+              resizeMode: 'contain',
+              marginLeft: '-17.5%',
+              marginTop: '2.5%',
+              marginRight: '-15%',
+              width: '75%',
+              height: '85%',
             }}
           />
           <Text style={styles.recipeButtonText}>Recipe</Text>
@@ -53,21 +53,21 @@ function RecipeButton(props) {
             setPressed(!isPressed);
           }}
           style={{
-            alignSelf: "flex-end",
-            marginRight: "2.5%",
-            marginTop: "2.5%",
+            alignSelf: 'flex-end',
+            marginRight: '2.5%',
+            marginTop: '2.5%',
           }}
         >
-          <Icon name={"close"} size={30} color={"black"} />
+          <Icon name={'close'} size={30} color={'black'} />
         </TouchableOpacity>
         <Image
-          source={require("../assets/image-9.png")}
+          source={require('../assets/image-9.png')}
           style={{
-            resizeMode: "contain",
-            alignSelf: "center",
-            height: "30%",
-            marginTop: "-1.5%",
-            marginBottom: "-1.5%",
+            resizeMode: 'contain',
+            alignSelf: 'center',
+            height: '30%',
+            marginTop: '-1.5%',
+            marginBottom: '-1.5%',
           }}
         />
         <Text style={styles.recipeName}>Recipe Name</Text>
@@ -92,16 +92,16 @@ const RecipeScreen = ({ navigation }) => {
         style={{
           flex: 1,
           elevation: 4,
-          backgroundColor: "#fefae0",
+          backgroundColor: '#fefae0',
           marginBottom: 4,
         }}
       >
         <Text
           style={{
-            fontWeight: "700",
+            fontWeight: '700',
             fontSize: 48,
-            marginLeft: "5%",
-            marginTop: "7.5%",
+            marginLeft: '5%',
+            marginTop: '7.5%',
           }}
         >
           Recipes
@@ -110,7 +110,7 @@ const RecipeScreen = ({ navigation }) => {
 
       <View
         style={{
-          backgroundColor: "white",
+          backgroundColor: 'white',
           flex: 4,
         }}
       >
@@ -121,19 +121,19 @@ const RecipeScreen = ({ navigation }) => {
         style={{
           flex: 1,
           elevation: 4,
-          backgroundColor: "#fefae0",
+          backgroundColor: '#fefae0',
           marginTop: 4,
-          flexDirection: "row",
+          flexDirection: 'row',
         }}
       >
         <View
           style={{
-            flexDirection: "row",
-            backgroundColor: "#92D098",
-            height: "45%",
-            width: "50%",
+            flexDirection: 'row',
+            backgroundColor: '#92D098',
+            height: '45%',
+            width: '50%',
             elevation: 4,
-            justifyContent: "center",
+            justifyContent: 'center',
             borderRadius: 5,
           }}
         >
@@ -141,17 +141,17 @@ const RecipeScreen = ({ navigation }) => {
         </View>
         <TouchableHighlight
           style={{
-            flexDirection: "row",
-            backgroundColor: "#C4EFC8",
-            height: "45%",
-            width: "50%",
+            flexDirection: 'row',
+            backgroundColor: '#C4EFC8',
+            height: '45%',
+            width: '50%',
             elevation: 4,
-            justifyContent: "center",
+            justifyContent: 'center',
             borderRadius: 5,
           }}
-          onPress={() => navigation.navigate("ListScreen")}
+          onPress={() => navigation.navigate('ListScreen')}
         >
-          <View style={{ alignSelf: "center" }}>
+          <View style={{ alignSelf: 'center' }}>
             <Text style={styles.otherScreenText}>List</Text>
           </View>
         </TouchableHighlight>
@@ -163,44 +163,44 @@ const RecipeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    backgroundColor: 'white',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   recipeButtonClosed: {
-    alignSelf: "center",
+    alignSelf: 'center',
     borderRadius: 10,
-    width: "95%",
-    height: "25%",
-    backgroundColor: "#FFC08E",
-    marginTop: "5%",
+    width: '95%',
+    height: '25%',
+    backgroundColor: '#FFC08E',
+    marginTop: '5%',
     elevation: 4,
   },
   recipeButtonOpen: {
-    alignSelf: "center",
+    alignSelf: 'center',
     borderRadius: 10,
-    width: "95%",
-    height: "85%",
-    backgroundColor: "#D0ECC7",
-    marginTop: "5%",
+    width: '95%',
+    height: '85%',
+    backgroundColor: '#D0ECC7',
+    marginTop: '5%',
     elevation: 4,
   },
-  recipeButtonText: { fontSize: 30, marginRight: "30%", marginTop: "10.5%" },
+  recipeButtonText: { fontSize: 30, marginRight: '30%', marginTop: '10.5%' },
   recipeName: {
     fontSize: 24,
-    fontWeight: "700",
-    textDecorationLine: "underline",
-    marginLeft: "4%",
+    fontWeight: '700',
+    textDecorationLine: 'underline',
+    marginLeft: '4%',
   },
   recipeDescription: {
     fontSize: 16,
-    fontWeight: "700",
-    marginLeft: "4%",
-    marginRight: "4%",
+    fontWeight: '700',
+    marginLeft: '4%',
+    marginRight: '4%',
   },
   activeScreenText: {
     fontSize: 30,
-    fontWeight: "700",
-    alignSelf: "center",
+    fontWeight: '700',
+    alignSelf: 'center',
   },
   otherScreenText: { fontSize: 30 },
 });
