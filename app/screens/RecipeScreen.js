@@ -10,10 +10,21 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Switch,
+<<<<<<< HEAD
 } from 'react-native';
 import { Icon } from '@rneui/themed';
+=======
+} from "react-native";
+import { Icon } from "@rneui/themed";
+import { useFonts } from "expo-font";
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
 
 function RecipeButton(props) {
+  let [fontsLoaded] = useFonts({
+    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
+    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
+  });
+
   const [isPressed, setPressed] = useState(false);
   if (!isPressed) {
     return (
@@ -98,7 +109,11 @@ const RecipeScreen = ({ navigation }) => {
       >
         <Text
           style={{
+<<<<<<< HEAD
             fontWeight: '700',
+=======
+            fontFamily: "InriaSans_700Bold",
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
             fontSize: 48,
             marginLeft: '5%',
             marginTop: '7.5%',
@@ -184,6 +199,7 @@ const styles = StyleSheet.create({
     marginTop: '5%',
     elevation: 4,
   },
+<<<<<<< HEAD
   recipeButtonText: { fontSize: 30, marginRight: '30%', marginTop: '10.5%' },
   recipeName: {
     fontSize: 24,
@@ -201,8 +217,32 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: '700',
     alignSelf: 'center',
+=======
+  recipeButtonText: {
+    fontSize: 30,
+    marginRight: "30%",
+    marginTop: "10.5%",
+    fontFamily: "InriaSans_400Regular",
   },
-  otherScreenText: { fontSize: 30 },
+  recipeName: {
+    fontSize: 24,
+    fontFamily: "InriaSans_700Bold",
+    textDecorationLine: "underline",
+    marginLeft: "4%",
+  },
+  recipeDescription: {
+    fontSize: 16,
+    fontFamily: "InriaSans_700Bold",
+    marginLeft: "4%",
+    marginRight: "4%",
+  },
+  activeScreenText: {
+    fontSize: 30,
+    fontFamily: "InriaSans_700Bold",
+    alignSelf: "center",
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
+  },
+  otherScreenText: { fontSize: 30, fontFamily: "InriaSans_400Regular" },
 });
 
 export default RecipeScreen;

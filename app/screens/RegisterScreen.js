@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
+=======
+import React from "react";
+import { StatusBar } from "expo-status-bar";
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
 import {
   StyleSheet,
   Text,
@@ -7,6 +12,7 @@ import {
   Image,
   View,
   TouchableOpacity,
+<<<<<<< HEAD
 } from 'react-native';
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
@@ -15,6 +21,16 @@ const RegisterScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
     InriaSans_400Regular: require('./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf'),
     InriaSans_700Bold: require('./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf'),
+=======
+} from "react-native";
+import AppLoading from "expo-app-loading";
+import { useFonts } from "expo-font";
+
+const RegisterScreen = ({ navigation }) => {
+  let [fontsLoaded] = useFonts({
+    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
+    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
   });
 
   const [First_name, setFirst] = React.useState("");
@@ -70,11 +86,17 @@ const RegisterScreen = ({ navigation }) => {
         console.log(error);
       });    
 
+<<<<<<< HEAD
+=======
+  if (!fontsLoaded) {
+    return <AppLoading />;
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
   }
 
   return (
     <View style={styles.container}>
       <Text style={[styles.headerText, styles.leftAlign]}>Register</Text>
+<<<<<<< HEAD
 
       <TextInput
         style={[styles.regularText, styles.input]}
@@ -91,6 +113,8 @@ const RegisterScreen = ({ navigation }) => {
         onChangeText={(Last_name) => setLast(Last_name)}
         value={Last_name}
       />
+=======
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
 
       <TextInput
         style={[styles.regularText, styles.input]}
@@ -129,7 +153,11 @@ const RegisterScreen = ({ navigation }) => {
       <View style={styles.centerAlign}>
         <TouchableOpacity
           style={styles.registerButton}
+<<<<<<< HEAD
           onPress={() => navigation.navigate("VerificationScreen")}
+=======
+          onPress={() => navigation.navigate("LoginScreen")}
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
         >
           <Text style={styles.regularText}>Register</Text>
         </TouchableOpacity>
@@ -147,6 +175,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   headerText: {
+<<<<<<< HEAD
     fontFamily: 'InriaSans_700Bold',
     fontSize: 40,
     marginTop: '15%',
@@ -160,6 +189,21 @@ const styles = StyleSheet.create({
   },
   centerAlign: {
     alignItems: 'center',
+=======
+    fontFamily: "InriaSans_700Bold",
+    fontSize: 40,
+    marginTop: "15%",
+  },
+  regularText: {
+    fontFamily: "InriaSans_400Regular",
+  },
+  leftAlign: {
+    alignSelf: "flex-start",
+    marginLeft: "5%",
+  },
+  centerAlign: {
+    alignItems: "center",
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
   },
   input: {
     height: 60,
@@ -169,7 +213,12 @@ const styles = StyleSheet.create({
     margin: 16,
     borderWidth: 0,
     padding: 8,
+<<<<<<< HEAD
     backgroundColor: '#D4D4D4',
+=======
+    backgroundColor: "#D4D4D4",
+    borderRadius: 9,
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
   },
   registerButton: {
     width: 100,
@@ -178,8 +227,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#A5DAAA',
     borderWidth: 1,
+<<<<<<< HEAD
     borderColor: '#000000',
     marginTop: '10%',
+=======
+    borderColor: "#000000",
+    marginTop: "10%",
+    borderRadius: 9,
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
   },
 });
 

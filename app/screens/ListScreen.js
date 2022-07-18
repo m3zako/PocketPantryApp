@@ -7,8 +7,14 @@ import {
   View,
   TouchableHighlight,
   Dimensions,
+<<<<<<< HEAD
 } from 'react-native';
 import { CheckBox } from '@rneui/themed';
+=======
+} from "react-native";
+import { CheckBox } from "@rneui/themed";
+import { useFonts } from "expo-font";
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
 
 function ShoppingCheckBoxListEntry(props) {
   const [isChecked, setChecked] = useState(false);
@@ -25,6 +31,11 @@ function ShoppingCheckBoxListEntry(props) {
   );
 }
 const ListScreen = ({ navigation }) => {
+  let [fontsLoaded] = useFonts({
+    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
+    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -37,7 +48,11 @@ const ListScreen = ({ navigation }) => {
       >
         <Text
           style={{
+<<<<<<< HEAD
             fontWeight: '700',
+=======
+            fontFamily: "InriaSans_700Bold",
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
             fontSize: 48,
             marginLeft: '5%',
             marginTop: '7.5%',
@@ -109,12 +124,30 @@ const styles = StyleSheet.create({
   },
   activeScreenText: {
     fontSize: 30,
+<<<<<<< HEAD
     fontWeight: '700',
     alignSelf: 'center',
   },
   otherScreenText: { fontSize: 30 },
   ingredientText: { fontSize: 25, marginTop: '4.25%' },
   amountText: { fontSize: 25, marginTop: '4.25%', marginLeft: '25%' },
+=======
+    fontFamily: "InriaSans_700Bold",
+    alignSelf: "center",
+  },
+  otherScreenText: { fontSize: 30, fontFamily: "InriaSans_400Regular" },
+  ingredientText: {
+    fontSize: 25,
+    marginTop: "4.25%",
+    fontFamily: "InriaSans_400Regular",
+  },
+  amountText: {
+    fontSize: 25,
+    marginTop: "4.25%",
+    marginLeft: "25%",
+    fontFamily: "InriaSans_400Regular",
+  },
+>>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
 });
 
 export default ListScreen;
