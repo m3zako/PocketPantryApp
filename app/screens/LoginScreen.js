@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import React, { createRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
-=======
-import React from "react";
-import { StatusBar } from "expo-status-bar";
->>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
 import {
   StyleSheet,
   Text,
@@ -12,7 +7,6 @@ import {
   Image,
   View,
   TouchableOpacity,
-<<<<<<< HEAD
   Keyboard,
 } from 'react-native';
 
@@ -60,48 +54,24 @@ const LoginScreen = ({ navigation }) => {
           console.log(response);
 
           if(response.status === 200){
-            AsyncStorage.setItem('user_id', response.data.email);
-            console.log(response.data.email);
+            if(response && response.data && response.data.email){
+              AsyncStorage.setItem('user_id', response.data.email);
+              console.log(response.data.email);
+            }
             navigation.navigate('RecipeScreen');
           }
-          else{
-            setError(response.status);
-            console.log('Incorrect Email/Password Combination');
-          }
+
          })
          .catch((error) => {
+          setError("Incorrect Email/Password Combination");
           console.log(error);
          })
 
-=======
-  Dimensions,
-} from "react-native";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
-
-const LoginScreen = ({ navigation }) => {
-  let [fontsLoaded] = useFonts({
-    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
-    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
-  });
-
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-
-  if (!fontsLoaded) {
-    return <AppLoading />;
->>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
   }
 
   return (
     <View style={styles.container}>
-<<<<<<< HEAD
       <Image style={styles.logo} source={require("../assets/logo.jpg")} />
-=======
-      <View style={styles.fixedSquareRatio}>
-        <Image style={styles.logo} source={require("../assets/logo.jpg")} />
-      </View>
->>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
 
       <Text style={[styles.headerText, styles.leftAlign]}>Login</Text>
 
@@ -110,13 +80,9 @@ const LoginScreen = ({ navigation }) => {
         fontSize={20}
         placeholder="Email"
         onChangeText={(email) => setEmail(email)}
-<<<<<<< HEAD
         onSubmitEditing={() =>
           passwordInput.current && passwordInput.current.focus()
         }
-=======
-        value={email}
->>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
       />
 
       <TextInput
@@ -127,10 +93,6 @@ const LoginScreen = ({ navigation }) => {
         secureTextEntry={true}
         onSubmitEditing={Keyboard.dismiss}
         onChangeText={(password) => setPassword(password)}
-<<<<<<< HEAD
-=======
-        value={password}
->>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
       />
 
       <TouchableOpacity onPress={() => console.log("Forgot Password Pressed")}>
@@ -139,7 +101,6 @@ const LoginScreen = ({ navigation }) => {
         </Text>
       </TouchableOpacity>
 
-<<<<<<< HEAD
       {error != "" ? <Text style={styles.errorTextStyle}>{error}</Text> : null}
 
       <View style={styles.centerAlign}>
@@ -149,18 +110,6 @@ const LoginScreen = ({ navigation }) => {
 
         <Text style={styles.regularText}>Don't have an account?</Text>
 
-=======
-      <View style={styles.centerAlign}>
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => navigation.navigate("RecipeScreen")}
-        >
-          <Text style={styles.regularText}>Login</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.regularText}>Don't have an account?</Text>
-
->>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
         <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
           <Text style={styles.regularText}>Register</Text>
         </TouchableOpacity>
@@ -177,25 +126,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "flex-start",
   },
-<<<<<<< HEAD
   logo: {
     width: 256,
     height: 256,
     alignSelf: "center",
     marginTop: "10%",
   },
-=======
-  fixedSquareRatio: {
-    aspectRatio: 1,
-    width: Dimensions.get("window").width >= 512 ? 256 : "50%",
-    alignSelf: "center",
-    marginTop: "10%",
-  },
-  logo: {
-    width: "100%",
-    height: "100%",
-  },
->>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
   headerText: {
     fontFamily: "InriaSans_700Bold",
     fontSize: 40,
@@ -229,19 +165,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#A5DAAA",
     borderWidth: 1,
     borderColor: "#000000",
-<<<<<<< HEAD
     marginTop: "10%",
     marginBottom: "10%",
   },
   errorTextStyle: {
     color: "red",
     textAlign: "center",
+    fontFamily: "InriaSans_700Bold",
     fontSize: 22,
-=======
-    marginTop: "15%",
-    marginBottom: "15%",
-    borderRadius: 9,
->>>>>>> 4cc6761f9008ed4985177d4bd1dee4f1073cc0ca
   },
 });
 

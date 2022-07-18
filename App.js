@@ -1,5 +1,4 @@
 import { React, useState } from 'react';
-import { StyleSheet } from 'react-native';
 
 import RecipeScreen from './app/screens/RecipeScreen';
 import ListScreen from './app/screens/ListScreen';
