@@ -1,5 +1,5 @@
-import React, {createRef} from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, { createRef } from "react";
+import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   Text,
@@ -7,24 +7,25 @@ import {
   View,
   TouchableOpacity,
   KeyboardAvoidingView,
-} from 'react-native';
+} from "react-native";
 
 import axios from "axios";
-import AppLoading from 'expo-app-loading';
-import { useFonts } from 'expo-font';
+import AppLoading from "expo-app-loading";
+import { useFonts } from "expo-font";
+import { Dimensions } from "react-native";
 
 const RegisterScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
-    InriaSans_400Regular: require('./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf'),
-    InriaSans_700Bold: require('./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf'),
+    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
+    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
   });
 
-  const [First_name, setFirst] = React.useState('');
-  const [Last_name, setLast] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [emailAuth, setEmailAuth] = React.useState('');
-  const [passwordAuth, setPasswordAuth] = React.useState('');
+  const [First_name, setFirst] = React.useState("");
+  const [Last_name, setLast] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [emailAuth, setEmailAuth] = React.useState("");
+  const [passwordAuth, setPasswordAuth] = React.useState("");
   const [pwdError, setPwdError] = React.useState();
   const [emailError, setEmailError] = React.useState();
 
@@ -39,10 +40,9 @@ const RegisterScreen = ({ navigation }) => {
   }
 
   const handleRegister = () => {
+    setPwdError("");
+    setEmailError("");
 
-    setPwdError('');
-    setEmailError('');
-    
     if (!First_name) {
       alert("Please enter your first name");
       return;
@@ -50,7 +50,7 @@ const RegisterScreen = ({ navigation }) => {
     if (!Last_name) {
       alert("Please enter your last name");
       return;
-    }    
+    }
     if (!email) {
       alert("Please enter your email");
       return;
@@ -60,8 +60,8 @@ const RegisterScreen = ({ navigation }) => {
       return;
     }
 
-    if(password !== passwordAuth){
-      setPwdError('Please make sure both passwords match');
+    if (password !== passwordAuth) {
+      setPwdError("Please make sure both passwords match");
       return;
     }
 
@@ -72,11 +72,12 @@ const RegisterScreen = ({ navigation }) => {
 
     const url = "https://pocketpantryapp.herokuapp.com/api/users/register";
 
-    var data = { 
-      First_name: First_name, 
-      Last_name: Last_name, 
-      Email: email, 
-      Password: password };
+    var data = {
+      First_name: First_name,
+      Last_name: Last_name,
+      Email: email,
+      Password: password,
+    };
 
     axios
       .post(url, data)
@@ -84,18 +85,15 @@ const RegisterScreen = ({ navigation }) => {
         console.log(response);
 
         if (response.status === 201) {
-          navigation.navigate('VerificationScreen');
-        }
-        else{
+          navigation.navigate("VerificationScreen");
+        } else {
           console.log(response);
         }
-
       })
       .catch((error) => {
         console.log(error);
-      });    
-
-  }
+      });
+  };
 
   return (
     <View style={styles.container}>
@@ -142,7 +140,7 @@ const RegisterScreen = ({ navigation }) => {
           }
         />
 
-        {emailError != "" ? (
+        {emailError != "" && emailError != undefined ? (
           <Text style={styles.errorTextStyle}>{emailError}</Text>
         ) : null}
 
@@ -165,7 +163,7 @@ const RegisterScreen = ({ navigation }) => {
           onChangeText={(passwordAuth) => setPasswordAuth(passwordAuth)}
         />
 
-        {pwdError != "" ? (
+        {pwdError != "" && pwdError != undefined ? (
           <Text style={styles.errorTextStyle}>{pwdError}</Text>
         ) : null}
 
@@ -206,7 +204,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input: {
-    height: 60,
+    height: Dimensions.get("window").height >= 1200 ? 60 : "7.5%",
     width: "90%",
     justifyContent: "flex-start",
     alignSelf: "center",
@@ -214,6 +212,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     padding: 8,
     backgroundColor: "#D4D4D4",
+    borderRadius: 9,
   },
   registerButton: {
     width: 100,
@@ -224,6 +223,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#000000",
     marginTop: "10%",
+    borderRadius: 9,
   },
   errorTextStyle: {
     color: "red",

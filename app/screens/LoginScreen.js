@@ -1,5 +1,5 @@
-import React, { createRef } from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, { createRef } from "react";
+import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   Text,
@@ -8,22 +8,22 @@ import {
   View,
   TouchableOpacity,
   Keyboard,
-} from 'react-native';
+  Dimensions,
+} from "react-native";
 
-import axios from 'axios';
+import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AppLoading from 'expo-app-loading';
-import { useFonts } from 'expo-font';
+import AppLoading from "expo-app-loading";
+import { useFonts } from "expo-font";
 
 const LoginScreen = ({ navigation }) => {
-  
   let [fontsLoaded] = useFonts({
-    InriaSans_400Regular: require('./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf'),
-    InriaSans_700Bold: require('./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf'),
+    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
+    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
   });
 
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState();
 
   const passwordInput = createRef();
@@ -32,47 +32,48 @@ const LoginScreen = ({ navigation }) => {
     return <AppLoading />;
   }
 
-  const handleLogin= () =>{
+  const handleLogin = () => {
+    setError("");
 
-    setError('');
-
-    if(!email){
-      alert('Please enter your email');
+    if (!email) {
+      alert("Please enter your email");
       return;
     }
-    if(!password){
-      alert('Please enter your password');
+    if (!password) {
+      alert("Please enter your password");
       return;
     }
 
-    const url = 'https://pocketpantryapp.herokuapp.com/api/users/login';
-    
-    let data = {Email: email, Password: password};
+    const url = "https://pocketpantryapp.herokuapp.com/api/users/login";
 
-    axios.post(url, data)
-         .then((response) => {
-          console.log(response);
+    let data = { Email: email, Password: password };
 
-          if(response.status === 200){
-            if(response && response.data && response.data.email){
-              AsyncStorage.setItem('user_id', response.data.email);
-              console.log(response.data.email);
-            }
-            navigation.navigate('RecipeScreen');
+    axios
+      .post(url, data)
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (response && response.data && response.data._id) {
+            AsyncStorage.setItem("user_id", response.data._id);
+            console.log(response.data._id);
           }
-
-         })
-         .catch((error) => {
-          setError("Incorrect Email/Password Combination");
-          console.log(error);
-         })
-
-  }
+          navigation.navigate("RecipeScreen", {
+            userID: response.data._id,
+          });
+        }
+      })
+      .catch((error) => {
+        setError("Incorrect Email/Password Combination");
+        console.log(error);
+      });
+  };
 
   return (
     <View style={styles.container}>
-      <Image style={styles.logo} source={require("../assets/logo.jpg")} />
-
+      <View style={styles.fixedSquareRatio}>
+        <Image style={styles.logo} source={require("../assets/logo.jpg")} />
+      </View>
       <Text style={[styles.headerText, styles.leftAlign]}>Login</Text>
 
       <TextInput
@@ -101,7 +102,9 @@ const LoginScreen = ({ navigation }) => {
         </Text>
       </TouchableOpacity>
 
-      {error != "" ? <Text style={styles.errorTextStyle}>{error}</Text> : null}
+      {error != "" && error != undefined ? (
+        <Text style={styles.errorTextStyle}>{error}</Text>
+      ) : null}
 
       <View style={styles.centerAlign}>
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
@@ -126,11 +129,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "flex-start",
   },
-  logo: {
-    width: 256,
-    height: 256,
+  fixedSquareRatio: {
+    aspectRatio: 1,
+    width: Dimensions.get("window").width >= 512 ? 256 : "50%",
     alignSelf: "center",
     marginTop: "10%",
+  },
+  logo: {
+    width: "100%",
+    height: "100%",
   },
   headerText: {
     fontFamily: "InriaSans_700Bold",
@@ -167,6 +174,7 @@ const styles = StyleSheet.create({
     borderColor: "#000000",
     marginTop: "10%",
     marginBottom: "10%",
+    borderRadius: 9,
   },
   errorTextStyle: {
     color: "red",
