@@ -26,7 +26,7 @@ function ShoppingCheckBoxListEntry(props) {
   );
 }
 const ListScreen = ({ route, navigation }) => {
-  let { userID } = route.params;
+  let { userID, token } = route.params;
 
   let [fontsLoaded] = useFonts({
     InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
@@ -71,7 +71,6 @@ const ListScreen = ({ route, navigation }) => {
           flex: 1,
           elevation: 4,
           backgroundColor: "#fefae0",
-          marginTop: 4,
           flexDirection: "row",
         }}
       >
@@ -88,6 +87,7 @@ const ListScreen = ({ route, navigation }) => {
           onPress={() =>
             navigation.navigate("RecipeScreen", {
               userID: userID,
+              token: token,
             })
           }
         >
