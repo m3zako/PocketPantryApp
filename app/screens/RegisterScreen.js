@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input: {
-    height: Dimensions.get("window").height >= 1200 ? 60 : "7.5%",
+    height: Dimensions.get("window").height >= 800 ? 60 : "7.5%",
     width: "90%",
     justifyContent: "flex-start",
     alignSelf: "center",
