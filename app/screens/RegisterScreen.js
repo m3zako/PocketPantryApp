@@ -1,4 +1,4 @@
-import React, { createRef } from "react";
+import React from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -10,15 +10,10 @@ import {
 } from "react-native";
 
 import axios from "axios";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
 import { Dimensions } from "react-native";
 
 const RegisterScreen = ({ navigation }) => {
-  let [fontsLoaded] = useFonts({
-    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
-    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
-  });
+
 
   const [First_name, setFirst] = React.useState("");
   const [Last_name, setLast] = React.useState("");
@@ -29,15 +24,7 @@ const RegisterScreen = ({ navigation }) => {
   const [pwdError, setPwdError] = React.useState();
   const [emailError, setEmailError] = React.useState();
 
-  const lastInputRef = createRef();
-  const emailInputRef = createRef();
-  const eAuthInputRef = createRef();
-  const passInputRef = createRef();
-  const pAuthInputRef = createRef();
 
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  }
 
   const handleRegister = () => {
     setPwdError("");
@@ -105,9 +92,6 @@ const RegisterScreen = ({ navigation }) => {
           fontSize={20}
           placeholder="First Name"
           onChangeText={(First_name) => setFirst(First_name)}
-          onSubmitEditing={() =>
-            lastInputRef.current && lastInputRef.current.focus()
-          }
         />
 
         <TextInput
@@ -115,9 +99,6 @@ const RegisterScreen = ({ navigation }) => {
           fontSize={20}
           placeholder="Last name"
           onChangeText={(Last_name) => setLast(Last_name)}
-          onSubmitEditing={() =>
-            emailInputRef.current && emailInputRef.current.focus()
-          }
         />
 
         <TextInput
@@ -125,9 +106,6 @@ const RegisterScreen = ({ navigation }) => {
           fontSize={20}
           placeholder="Email"
           onChangeText={(email) => setEmail(email)}
-          onSubmitEditing={() =>
-            eAuthInputRef.current && eAuthInputRef.current.focus()
-          }
         />
 
         <TextInput
@@ -135,9 +113,6 @@ const RegisterScreen = ({ navigation }) => {
           fontSize={20}
           placeholder="Confirm Email"
           onChangeText={(emailAuth) => setEmailAuth(emailAuth)}
-          onSubmitEditing={() =>
-            passInputRef.current && passInputRef.current.focus()
-          }
         />
 
         {emailError != "" && emailError != undefined ? (
@@ -150,9 +125,6 @@ const RegisterScreen = ({ navigation }) => {
           placeholder="Password"
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
-          onSubmitEditing={() =>
-            pAuthInputRef.current && pAuthInputRef.current.focus()
-          }
         />
 
         <TextInput

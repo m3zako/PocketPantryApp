@@ -6,20 +6,17 @@ import {
   Image,
   View,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
-import AppLoading from 'expo-app-loading';
-import { useFonts } from 'expo-font';
+
 
 const Verification = ({ navigation }) => {
-  let [fontsLoaded] = useFonts({
-    InriaSans_400Regular: require('./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf'),
-    InriaSans_700Bold: require('./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf'),
-  });
 
   return (
     <View style={styles.container}>
-      <Image style={styles.logo} source={require("../assets/logo.jpg")} />
-
+      <View style={styles.fixedSquareRatio}>
+        <Image style={styles.logo} source={require("../assets/logo.jpg")} />
+      </View>
       <Image style={styles.emage} source={require("../assets/email.png")} />
 
       <Text style={styles.mainText}>Please verify the email address for</Text>
@@ -37,30 +34,34 @@ const Verification = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'flex-start',
+    backgroundColor: "#fff",
+    justifyContent: "flex-start",
+  },
+  fixedSquareRatio: {
+    aspectRatio: 1,
+    width: Dimensions.get("window").width >= 512 ? 256 : "50%",
+    alignSelf: "center",
+    marginTop: "10%",
   },
   logo: {
-    width: 256,
-    height: 256,
-    alignSelf: 'center',
-    marginTop: '10%',
+    width: "100%",
+    height: "100%",
   },
   emage: {
     width: 128,
     height: 92,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   mainText: {
-    fontFamily: 'InriaSans_700Bold',
+    fontFamily: "InriaSans_700Bold",
     fontSize: 30,
-    textAlign: 'center',
-    marginHorizontal: '5%'
+    textAlign: "center",
+    marginHorizontal: "5%",
   },
   bottomText: {
-    fontFamily: 'InriaSans_400Regular',
+    fontFamily: "InriaSans_400Regular",
     fontSize: 22,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 

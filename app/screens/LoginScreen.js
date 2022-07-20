@@ -1,4 +1,4 @@
-import React, { createRef } from "react";
+import React from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -7,30 +7,19 @@ import {
   Image,
   View,
   TouchableOpacity,
-  Keyboard,
   Dimensions,
 } from "react-native";
 
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AppLoading from "expo-app-loading";
-import { useFonts } from "expo-font";
 
 const LoginScreen = ({ navigation }) => {
-  let [fontsLoaded] = useFonts({
-    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
-    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
-  });
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState();
 
-  const passwordInput = createRef();
 
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  }
 
   const handleLogin = () => {
     setError("");
@@ -81,18 +70,14 @@ const LoginScreen = ({ navigation }) => {
         fontSize={20}
         placeholder="Email"
         onChangeText={(email) => setEmail(email)}
-        onSubmitEditing={() =>
-          passwordInput.current && passwordInput.current.focus()
-        }
+
       />
 
       <TextInput
         style={[styles.regularText, styles.input]}
         fontSize={20}
         placeholder="Password"
-        ref={passwordInput}
         secureTextEntry={true}
-        onSubmitEditing={Keyboard.dismiss}
         onChangeText={(password) => setPassword(password)}
       />
 

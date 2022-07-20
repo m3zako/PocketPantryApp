@@ -9,10 +9,30 @@ import Verification from "./app/screens/Verification";
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AppLoading from 'expo-app-loading';
+
+import useFonts from "./hooks/useFonts";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+  const [IsReady, SetIsReady] = useState(false);
+
+  const LoadFonts = async () => {
+    await useFonts();
+  };
+
+  if (!IsReady) {
+    return (
+      <AppLoading
+        startAsync={LoadFonts}
+        onFinish={() => SetIsReady(true)}
+        onError={() => {}}
+      />
+    );
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -28,4 +48,5 @@ export default function App() {
       </Stack.Navigator>
     </NavigationContainer>
   );
+
 }

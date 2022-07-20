@@ -9,7 +9,6 @@ import {
   Dimensions,
 } from "react-native";
 import { CheckBox } from "@rneui/themed";
-import { useFonts } from "expo-font";
 
 function ShoppingCheckBoxListEntry(props) {
   const [isChecked, setChecked] = useState(false);
@@ -27,11 +26,6 @@ function ShoppingCheckBoxListEntry(props) {
 }
 const ListScreen = ({ route, navigation }) => {
   let { userID } = route.params;
-
-  let [fontsLoaded] = useFonts({
-    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
-    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
-  });
 
   return (
     <SafeAreaView style={styles.container}>
