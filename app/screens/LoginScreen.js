@@ -43,12 +43,20 @@ const LoginScreen = ({ navigation }) => {
         console.log(response);
 
         if (response.status === 200) {
-          if (response && response.data && response.data._id) {
+          if (
+            response &&
+            response.data &&
+            response.data._id &&
+            response.data.token
+          ) {
             AsyncStorage.setItem("user_id", response.data._id);
+            AsyncStorage.setItem("token", response.data.token);
             console.log(response.data._id);
+            console.log(response.data.token);
           }
           navigation.navigate("RecipeScreen", {
             userID: response.data._id,
+            token: response.data.token,
           });
         }
       })

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,9 +9,11 @@ import {
   Platform,
   TouchableHighlight,
   TouchableOpacity,
-  Switch,
+  FlatList,
 } from "react-native";
 import { Icon } from "@rneui/themed";
+import { useFonts } from "expo-font";
+import axios from "axios";
 
 function RecipeButton(props) {
   const [isPressed, setPressed] = useState(false);
@@ -34,14 +36,14 @@ function RecipeButton(props) {
             source={require("../assets/image-6.png")}
             style={{
               resizeMode: "contain",
-              marginLeft: "-17.5%",
-              marginTop: "2.5%",
+              marginLeft: "-18%",
+              marginTop: "3.5%",
               marginRight: "-15%",
-              width: "75%",
-              height: "85%",
+              width: "80%",
+              height: "80%",
             }}
           />
-          <Text style={styles.recipeButtonText}>Recipe</Text>
+          <Text style={styles.recipeButtonText}>{props.name}</Text>
         </View>
       </TouchableHighlight>
     );
@@ -70,7 +72,7 @@ function RecipeButton(props) {
             marginBottom: "-1.5%",
           }}
         />
-        <Text style={styles.recipeName}>Recipe Name</Text>
+        <Text style={styles.recipeName}>{props.name}</Text>
         <Text style={styles.recipeDescription}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque
           bibendum maximus tortor a ornare. Phasellus mattis orci eu auctor
@@ -86,8 +88,59 @@ function RecipeButton(props) {
 }
 
 const RecipeScreen = ({ route, navigation }) => {
-  let { userID } = route.params;
+  let { userID, token } = route.params;
 
+  const [recipes, setRecipes] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    loadRecipes();
+  }, []);
+
+  function loadRecipes() {
+    setError("");
+
+    let i = 0;
+
+    const url = "https://pocketpantryapp.herokuapp.com/api/recipe/getRecipes";
+
+    let data = { UserId: userID };
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (
+            response &&
+            response.data &&
+            response.data.Saved_recipes &&
+            response.data.Saved_recipes[0]
+          ) {
+            console.log(response.data.Saved_recipes);
+            setRecipes(response.data.Saved_recipes);
+            console.log(recipes[0]);
+          } else {
+            setError("No Recipes Found");
+            console.log(error);
+          }
+        }
+      })
+      .catch((error) => {
+        setError("Unable to find user by ID " + userID);
+        console.log(error);
+      });
+  }
+
+  let [fontsLoaded] = useFonts({
+    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
+    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
+  });
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -116,7 +169,18 @@ const RecipeScreen = ({ route, navigation }) => {
           flex: 4,
         }}
       >
-        <RecipeButton />
+        {error == "" || error == undefined ? (
+          <FlatList
+            data={recipes}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => {
+              return <RecipeButton name={item.Name} />;
+            }}
+            contentContainerStyle={{ flexGrow: 1 }}
+          />
+        ) : (
+          <Text style={styles.errorTextStyle}>{error}</Text>
+        )}
       </View>
 
       <View
@@ -124,7 +188,6 @@ const RecipeScreen = ({ route, navigation }) => {
           flex: 1,
           elevation: 4,
           backgroundColor: "#fefae0",
-          marginTop: 4,
           flexDirection: "row",
         }}
       >
@@ -154,6 +217,7 @@ const RecipeScreen = ({ route, navigation }) => {
           onPress={() =>
             navigation.navigate("ListScreen", {
               userID: userID,
+              token: token,
             })
           }
         >
@@ -176,7 +240,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 10,
     width: "95%",
-    height: "25%",
+    height: "50%",
     backgroundColor: "#FFC08E",
     marginTop: "5%",
     elevation: 4,
@@ -185,15 +249,15 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 10,
     width: "95%",
-    height: "85%",
+    height: "90%",
     backgroundColor: "#D0ECC7",
     marginTop: "5%",
     elevation: 4,
   },
   recipeButtonText: {
     fontSize: 30,
-    marginRight: "30%",
-    marginTop: "10.5%",
+    marginRight: "18%",
+    marginTop: "12.5%",
     fontFamily: "InriaSans_400Regular",
   },
   recipeName: {
@@ -214,6 +278,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   otherScreenText: { fontSize: 30, fontFamily: "InriaSans_400Regular" },
+  errorTextStyle: {
+    color: "black",
+    textAlign: "center",
+    fontFamily: "InriaSans_700Bold",
+    fontSize: 22,
+  },
 });
 
 export default RecipeScreen;

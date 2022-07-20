@@ -25,7 +25,7 @@ function ShoppingCheckBoxListEntry(props) {
   );
 }
 const ListScreen = ({ route, navigation }) => {
-  let { userID } = route.params;
+  let { userID, token } = route.params;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -65,7 +65,6 @@ const ListScreen = ({ route, navigation }) => {
           flex: 1,
           elevation: 4,
           backgroundColor: "#fefae0",
-          marginTop: 4,
           flexDirection: "row",
         }}
       >
@@ -82,6 +81,7 @@ const ListScreen = ({ route, navigation }) => {
           onPress={() =>
             navigation.navigate("RecipeScreen", {
               userID: userID,
+              token: token,
             })
           }
         >
