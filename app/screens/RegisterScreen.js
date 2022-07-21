@@ -23,6 +23,7 @@ const RegisterScreen = ({ navigation }) => {
   const [passwordAuth, setPasswordAuth] = React.useState("");
   const [pwdError, setPwdError] = React.useState();
   const [emailError, setEmailError] = React.useState();
+  const [error, setError] = React.useState("");
 
 
 
@@ -59,7 +60,7 @@ const RegisterScreen = ({ navigation }) => {
 
     const url = "https://pocketpantryapp.herokuapp.com/api/users/register";
 
-    var data = {
+    let data = {
       First_name: First_name,
       Last_name: Last_name,
       Email: email,
@@ -72,8 +73,13 @@ const RegisterScreen = ({ navigation }) => {
         console.log(response);
 
         if (response.status === 201) {
-          navigation.navigate("VerificationScreen");
+          navigation.navigate("VerificationScreen", {
+            userID: response.data._id,
+            email: email,
+            token:response.data.token,
+          });
         } else {
+          setError("That user already exists!");
           console.log(response);
         }
       })

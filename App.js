@@ -36,7 +36,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="LoginScreen"
+        initialRouteName="SplashScreen"
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="SplashScreen" component={SplashScreen} />

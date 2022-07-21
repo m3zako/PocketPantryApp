@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Dimensions } from "react-native";
 import * as SplashScreens from "expo-splash-screen";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -13,7 +13,11 @@ const SplashScreen = ({ navigation }) => {
     setTimeout(() => {
 
       AsyncStorage.getItem().then((value) =>
-        navigation.replace(value === null ? "LoginScreen" : "RecipeScreen")
+        navigation.navigate(
+          value === null ? "LoginScreen" : "RecipeScreen",
+          value === null ? false : AsyncStorage.getItem("user_id"),
+          value === null ? null : AsyncStorage.getItem("token"),
+        )
       );
 
     }, 5000);
@@ -21,9 +25,8 @@ const SplashScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <View
-      style= {styles.container}>
-      <Image source={require('../assets/splash.png')} />
+    <View style={styles.container}>
+        <Image style={styles.logo} source={require("../assets/logo.jpg")} />
     </View>
   );
   
@@ -32,8 +35,13 @@ const SplashScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+  },
+  logo: {
+    width: 256,
+    height: 256,
   },
 });
 

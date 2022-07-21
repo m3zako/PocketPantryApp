@@ -12,7 +12,6 @@ import {
   FlatList,
 } from "react-native";
 import { Icon } from "@rneui/themed";
-import { useFonts } from "expo-font";
 import axios from "axios";
 
 function RecipeButton(props) {
@@ -137,10 +136,6 @@ const RecipeScreen = ({ route, navigation }) => {
       });
   }
 
-  let [fontsLoaded] = useFonts({
-    InriaSans_400Regular: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_400Regular.ttf"),
-    InriaSans_700Bold: require("./../../node_modules/@expo-google-fonts/inria-sans/InriaSans_700Bold.ttf"),
-  });
   return (
     <SafeAreaView style={styles.container}>
       <View
