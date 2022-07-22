@@ -13,14 +13,12 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
 const LoginScreen = ({ route, navigation }) => {
-
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState();
 
-  let veri = route.params;
+  let { veri } = route.params;
 
   const handleLogin = () => {
     setError("");
@@ -97,16 +95,12 @@ const LoginScreen = ({ route, navigation }) => {
         <Text style={styles.errorTextStyle}>{error}</Text>
       ) : null}
 
-      { veri ? (
-      <Text style={styles.veriText}>Account Verified</Text>
-      ) : null}
+      {veri ? <Text style={styles.veriText}>Account Verified</Text> : null}
 
       <View style={styles.centerAlign}>
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.regularText}>Login</Text>
         </TouchableOpacity>
-
-
 
         <Text style={styles.regularText}>Don't have an account?</Text>
 
@@ -179,12 +173,12 @@ const styles = StyleSheet.create({
     fontFamily: "InriaSans_700Bold",
     fontSize: 22,
   },
-  veriText:{
+  veriText: {
     color: "green",
     textAlign: "center",
     fontFamily: "InriaSana_700Bold",
     fontSize: 22,
-  }
+  },
 });
 
 export default LoginScreen;

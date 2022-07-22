@@ -100,8 +100,6 @@ const RecipeScreen = ({ route, navigation }) => {
   function loadRecipes() {
     setError("");
 
-    let i = 0;
-
     const url = "https://pocketpantryapp.herokuapp.com/api/recipe/getRecipes";
 
     let data = { UserId: userID };

@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import {
   SafeAreaView,
   Text,
@@ -7,25 +7,127 @@ import {
   View,
   TouchableHighlight,
   Dimensions,
+  FlatList,
 } from "react-native";
 import { CheckBox } from "@rneui/themed";
+import axios from "axios";
 
 function ShoppingCheckBoxListEntry(props) {
-  const [isChecked, setChecked] = useState(false);
+  const [isChecked, setChecked] = useState(props.checked);
+  const [error, setError] = useState("");
+  let fillerAmount = "Ingredient".length - props.name.length;
+  let i = 0;
+  let fillerString = "";
+
+  for (i = 0; i < fillerAmount; i++) {
+    fillerString = fillerString + " ";
+  }
+
+  const toggleCheck = () => {
+    setError("");
+
+    const url =
+      "https://pocketpantryapp.herokuapp.com/api/list/checkItemFromList";
+
+    let data = {
+      UserId: props.uID,
+      IngredientId: props.ingID,
+      Checked: !isChecked,
+    };
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${props.token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (response && response.data) {
+            console.log(response.data);
+            setChecked(!isChecked);
+            console.log(isChecked);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <View style={{ flexDirection: "row" }}>
       <CheckBox
         checked={isChecked}
-        onPress={() => setChecked(!isChecked)}
+        onPress={toggleCheck}
         size={Dimensions.get("window").width * 0.1}
       />
-      <Text style={styles.ingredientText}>Ingredient</Text>
-      <Text style={styles.amountText}>0</Text>
+      <Text style={styles.ingredientText}>
+        {props.name}
+        {fillerString}
+      </Text>
+      <Text style={styles.amountText}>
+        {props.amount} {props.unit}
+      </Text>
     </View>
   );
 }
 const ListScreen = ({ route, navigation }) => {
   let { userID, token } = route.params;
+
+  const [shopList, setShopList] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    loadShoppingList();
+  }, []);
+
+  function loadShoppingList() {
+    setError("");
+
+    const url = "https://pocketpantryapp.herokuapp.com/api/list/getList";
+
+    let data = { UserId: userID };
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (
+            response &&
+            response.data &&
+            response.data.Shopping_list &&
+            response.data.Shopping_list[0]
+          ) {
+            console.log(response.data.Shopping_list);
+            setShopList(response.data.Shopping_list);
+            console.log(shopList[0]);
+          } else {
+            console.log(response.data);
+            setError("Shopping List Is Empty");
+            console.log(error);
+          }
+        }
+      })
+      .catch((error) => {
+        setError("Unable to find user by ID " + userID);
+        console.log(userID);
+        console.log(token);
+
+        console.log(userID._W);
+        console.log(token._W);
+
+        console.log(error);
+      });
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -53,11 +155,30 @@ const ListScreen = ({ route, navigation }) => {
         style={{
           backgroundColor: "white",
           flex: 4,
-          marginLeft: "5%",
-          marginTop: "5%",
         }}
       >
-        <ShoppingCheckBoxListEntry />
+        {error == "" || error == undefined ? (
+          <FlatList
+            data={shopList}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => {
+              return (
+                <ShoppingCheckBoxListEntry
+                  name={item.Name}
+                  amount={item.Amount}
+                  unit={item.Unit}
+                  checked={item.Checked}
+                  ingID={item.IngredientId}
+                  uID={userID}
+                  token={token}
+                />
+              );
+            }}
+            contentContainerStyle={{ flexGrow: 1 }}
+          />
+        ) : (
+          <Text style={styles.errorTextStyle}>{error}</Text>
+        )}
       </View>
 
       <View
@@ -129,6 +250,12 @@ const styles = StyleSheet.create({
     marginTop: "4.25%",
     marginLeft: "25%",
     fontFamily: "InriaSans_400Regular",
+  },
+  errorTextStyle: {
+    color: "black",
+    textAlign: "center",
+    fontFamily: "InriaSans_700Bold",
+    fontSize: 22,
   },
 });
 
