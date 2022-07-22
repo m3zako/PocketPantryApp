@@ -5,20 +5,36 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 SplashScreens.preventAutoHideAsync();
 
+let id, tok;
+
+getAsyncs = async () =>{
+
+  try{
+    id = await AsyncStorage.getItem("user_id");
+    tok = await AsyncStorage.getItem("token");
+  }
+  catch(e){
+    id = null;
+    tok = null;
+  }
+
+}
+
 const SplashScreen = ({ navigation }) => {
 
 
   useEffect(() => {
 
+    getAsyncs();
+
     setTimeout(() => {
 
-      AsyncStorage.getItem().then((value) =>
-        navigation.navigate(
-          value === null ? "LoginScreen" : "RecipeScreen",
-          value === null ? false : AsyncStorage.getItem("user_id"),
-          value === null ? null : AsyncStorage.getItem("token"),
-        )
-      );
+      if(id && tok){
+        navigation.navigate("RecipeScreen", {userID: id, token: tok});
+      }
+      else{
+        navigation.navigate("LoginScreen", {veri: false});
+      }
 
     }, 5000);
 
@@ -40,8 +56,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   logo: {
-    width: 256,
-    height: 256,
+    width: 192,
+    height: 192,
   },
 });
 

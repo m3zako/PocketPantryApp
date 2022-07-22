@@ -16,7 +16,9 @@ const Verification = ({ route, navigation }) => {
   let {userID, email, token} = route.params;
 
   const [input, setInput] = React.useState("");
+  const [resend, setResend] = React.useState("");
   const [error, setError] = React.useState();
+
 
   const Verify = () => {
       setError("");
@@ -45,8 +47,6 @@ const Verification = ({ route, navigation }) => {
         .catch((error) => {
           setError("Incorrect Code");
           console.log(error);
-          console.log(data.UserId);
-          console.log(data.Token);
         });
   };
 
@@ -63,7 +63,7 @@ const resendVerification = () => {
             },
           })
           .then((response) => {
-            console.log(response);
+            setResend("Email Resent!");
           })
           .catch((error) => {
             console.log(error);
@@ -93,9 +93,10 @@ const resendVerification = () => {
         <Text style={styles.errorTextStyle}>{error}</Text>
       ) : null}
 
-      <TouchableOpacity onPress={Verify} 
-        style={styles.Button} >
-        <Text style={styles.bottomText} alignText="center">Verify</Text>
+      <TouchableOpacity onPress={Verify} style={styles.Button}>
+        <Text style={styles.bottomText} alignText="center">
+          Verify
+        </Text>
       </TouchableOpacity>
 
       <Text style={styles.bottomText} marginTop="5%">
@@ -103,8 +104,12 @@ const resendVerification = () => {
       </Text>
 
       <TouchableOpacity onPress={resendVerification}>
-        <Text style={styles.bottomText}>Send Again</Text>
+        <Text style={styles.bottomText} color="purple">Send Again</Text>
       </TouchableOpacity>
+
+      {resend != "" && resend != undefined ? (
+        <Text style={styles.reText}>{resend}</Text>
+      ) : null}
     </View>
   );
 };
@@ -160,12 +165,18 @@ const styles = StyleSheet.create({
     marginTop: "7%",
     borderRadius: 9,
     justifyContent: "center",
-    alignSelf:"center"
+    alignSelf: "center",
   },
   errorTextStyle: {
     color: "red",
     textAlign: "center",
     fontFamily: "InriaSans_700Bold",
+    fontSize: 22,
+  },
+  reText: {
+    color: "green",
+    textAlign: "center",
+    fontFamily: "InriaSana_700Bold",
     fontSize: 22,
   },
 });

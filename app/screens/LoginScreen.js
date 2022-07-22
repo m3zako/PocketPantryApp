@@ -24,7 +24,7 @@ const LoginScreen = ({ route, navigation }) => {
 
   const handleLogin = () => {
     setError("");
-
+    veri = false;
     if (!email) {
       alert("Please enter your email");
       return;
@@ -52,8 +52,6 @@ const LoginScreen = ({ route, navigation }) => {
           ) {
             AsyncStorage.setItem("user_id", response.data._id);
             AsyncStorage.setItem("token", response.data.token);
-            console.log(response.data._id);
-            console.log(response.data.token);
           }
           navigation.navigate("RecipeScreen", {
             userID: response.data._id,

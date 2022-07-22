@@ -70,8 +70,6 @@ const RegisterScreen = ({ navigation }) => {
     axios
       .post(url, data)
       .then((response) => {
-        console.log(response);
-
         if (response.status === 201) {
           navigation.navigate("VerificationScreen", {
             userID: response.data._id,
@@ -80,7 +78,6 @@ const RegisterScreen = ({ navigation }) => {
           });
         } else {
           setError("That user already exists!");
-          console.log(response);
         }
       })
       .catch((error) => {
@@ -142,6 +139,10 @@ const RegisterScreen = ({ navigation }) => {
         />
 
         {pwdError != "" && pwdError != undefined ? (
+          <Text style={styles.errorTextStyle}>{pwdError}</Text>
+        ) : null}
+
+        {error != "" && error != undefined ? (
           <Text style={styles.errorTextStyle}>{pwdError}</Text>
         ) : null}
 

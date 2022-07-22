@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function RecipeButton(props) {
   const [isPressed, setPressed] = useState(false);
@@ -132,6 +133,12 @@ const RecipeScreen = ({ route, navigation }) => {
       })
       .catch((error) => {
         setError("Unable to find user by ID " + userID);
+        console.log(userID);
+        console.log(token);
+
+        console.log(userID._W);
+        console.log(token._W);
+
         console.log(error);
       });
   }
