@@ -133,10 +133,10 @@ const ListScreen = ({ route, navigation }) => {
     <SafeAreaView style={styles.container}>
       <View
         style={{
-          flex: 1,
           elevation: 4,
           backgroundColor: "#fefae0",
           marginBottom: 4,
+          height: Dimensions.get("window").height / 6,
         }}
       >
         <Text
@@ -144,7 +144,7 @@ const ListScreen = ({ route, navigation }) => {
             fontFamily: "InriaSans_700Bold",
             fontSize: 48,
             marginLeft: "5%",
-            marginTop: "7.5%",
+            marginTop: "8.5%",
           }}
         >
           Shopping List
@@ -154,7 +154,7 @@ const ListScreen = ({ route, navigation }) => {
       <View
         style={{
           backgroundColor: "white",
-          flex: 4,
+          height: (Dimensions.get("window").height * 2) / 3,
         }}
       >
         {error == "" || error == undefined ? (
@@ -183,10 +183,10 @@ const ListScreen = ({ route, navigation }) => {
 
       <View
         style={{
-          flex: 1,
           elevation: 4,
           backgroundColor: "#fefae0",
           flexDirection: "row",
+          height: Dimensions.get("window").height / 6,
         }}
       >
         <TouchableHighlight
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight / 100 : 0,
   },
   activeScreenText: {
     fontSize: 30,

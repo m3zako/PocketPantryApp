@@ -10,10 +10,17 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   FlatList,
+  Button,
+  Dimensions,
+  TextInput,
+  List,
+  Alert,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Menu, Provider, Portal, Modal } from "react-native-paper";
+import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
 
 function RecipeButton(props) {
   const [isPressed, setPressed] = useState(false);
@@ -92,6 +99,19 @@ const RecipeScreen = ({ route, navigation }) => {
 
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState("");
+  const [addError, setAddError] = useState("");
+  const [search, setSearch] = useState("");
+  const [addSearch, setAddSearch] = useState("");
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [addVisible, setAddVisible] = useState(false);
+  const [searchVisible, setSearchVisible] = useState(false);
+
+  const closeMenu = () => setMenuVisible(false);
+  const openMenu = () => setMenuVisible(true);
+  const showAddModal = () => setAddVisible(true);
+  const hideAddModal = () => setAddVisible(false);
+  const showSearchModal = () => setSearchVisible(true);
+  const hideSearchModal = () => setSearchVisible(false);
 
   useEffect(() => {
     loadRecipes();
@@ -141,14 +161,59 @@ const RecipeScreen = ({ route, navigation }) => {
       });
   }
 
+  const searchIngredients = () => {
+    setError("");
+
+    const url =
+      "https://pocketpantryapp.herokuapp.com/api/recipe/searchRecipeByName";
+
+    let data = { UserId: userID, Name: search };
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (
+            response &&
+            response.data &&
+            response.data.SearchResults &&
+            response.data.SearchResults[0]
+          ) {
+            console.log(response.data.SearchResults);
+            setRecipes(response.data.SearchResults);
+          } else {
+            setError("No Recipes Found");
+            console.log(error);
+          }
+        }
+      })
+      .catch((error) => {
+        setError("Unable to find user by ID " + userID);
+        console.log(userID);
+        console.log(token);
+
+        console.log(userID._W);
+        console.log(token._W);
+
+        console.log(error);
+      });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View
         style={{
-          flex: 1,
           elevation: 4,
           backgroundColor: "#fefae0",
           marginBottom: 4,
+          flexDirection: "row",
+          height: Dimensions.get("window").height / 6,
         }}
       >
         <Text
@@ -156,17 +221,16 @@ const RecipeScreen = ({ route, navigation }) => {
             fontFamily: "InriaSans_700Bold",
             fontSize: 48,
             marginLeft: "5%",
-            marginTop: "7.5%",
+            marginTop: "8.5%",
           }}
         >
           Recipes
         </Text>
       </View>
-
       <View
         style={{
           backgroundColor: "white",
-          flex: 4,
+          height: (Dimensions.get("window").height * 2) / 3,
         }}
       >
         {error == "" || error == undefined ? (
@@ -185,10 +249,10 @@ const RecipeScreen = ({ route, navigation }) => {
 
       <View
         style={{
-          flex: 1,
           elevation: 4,
           backgroundColor: "#fefae0",
           flexDirection: "row",
+          height: Dimensions.get("window").height / 6,
         }}
       >
         <View
@@ -226,6 +290,154 @@ const RecipeScreen = ({ route, navigation }) => {
           </View>
         </TouchableHighlight>
       </View>
+      <View
+        style={{
+          position: "absolute",
+          height:
+            Platform.OS === "android"
+              ? Dimensions.get("window").height + StatusBar.currentHeight
+              : "100%",
+          width: "100%",
+        }}
+      >
+        <Provider>
+          <View>
+            <Menu
+              visible={menuVisible}
+              onDismiss={closeMenu}
+              anchor={
+                <TouchableOpacity
+                  onPress={openMenu}
+                  style={{ top: "65%", left: "25%" }}
+                >
+                  <Icon name={"menu"} size={50} color={"black"} />
+                </TouchableOpacity>
+              }
+              style={{
+                position: "absolute",
+                left: "47.5%",
+                top: "15%",
+              }}
+            >
+              <Menu.Item
+                onPress={showAddModal}
+                title="Add"
+                icon="plus"
+                titleStyle={{ fontFamily: "InriaSans_400Regular" }}
+              />
+              <Menu.Item
+                onPress={showSearchModal}
+                title="Search"
+                icon="magnify"
+                titleStyle={{ fontFamily: "InriaSans_400Regular" }}
+              />
+              <Menu.Item
+                onPress={() => {
+                  Alert.alert("Action", "Clear All");
+                }}
+                title="Clear All"
+                icon="delete"
+                titleStyle={{ fontFamily: "InriaSans_400Regular" }}
+              />
+              <Menu.Item
+                onPress={() => {
+                  Alert.alert("Log Out", "Are you sure you want to log out?", [
+                    {
+                      text: "Cancel",
+                      onPress: () => console.log("Cancel Pressed"),
+                      style: "cancel",
+                    },
+                    {
+                      text: "OK",
+                      onPress: () =>
+                        navigation.navigate("LoginScreen", {
+                          veri: false,
+                        }),
+                    },
+                  ]);
+                }}
+                title="Log Out"
+                icon="logout"
+                titleStyle={{ fontFamily: "InriaSans_400Regular" }}
+              />
+            </Menu>
+          </View>
+        </Provider>
+        <Provider>
+          <Portal>
+            <Modal
+              visible={addVisible}
+              onDismiss={hideAddModal}
+              contentContainerStyle={{
+                backgroundColor: "white",
+                width: "85%",
+                height: "90%",
+                alignSelf: "center",
+                borderRadius: 10,
+                marginTop:
+                  Platform.OS === "android"
+                    ? -StatusBar.currentHeight * 2.75
+                    : 0,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  flex: 1,
+                }}
+              >
+                <TextInput
+                  style={[styles.regularText, styles.searchAddInput]}
+                  fontSize={20}
+                  placeholder="Search..."
+                  onChangeText={(addSearch) => setAddSearch(addSearch)}
+                />
+                <Icon
+                  name={"search"}
+                  size={50}
+                  color={"black"}
+                  style={{ marginTop: "30%" }}
+                />
+              </View>
+              <View style={{ flex: 5 }}></View>
+            </Modal>
+          </Portal>
+        </Provider>
+        <Provider>
+          <Portal>
+            <Modal
+              visible={searchVisible}
+              onDismiss={hideSearchModal}
+              contentContainerStyle={{
+                backgroundColor: "#D4D4D4",
+                alignSelf: "center",
+                borderRadius: 10,
+                marginTop:
+                  Platform.OS === "android" ? -StatusBar.currentHeight : 0,
+                height: 60,
+                width: Dimensions.get("window").width * 0.9,
+              }}
+            >
+              <View style={{ flexDirection: "row" }}>
+                <TextInput
+                  style={[styles.regularText, styles.searchInput]}
+                  fontSize={20}
+                  placeholder="Search..."
+                  onChangeText={(search) => setSearch(search)}
+                />
+                <TouchableOpacity onPress={searchIngredients}>
+                  <Icon
+                    name={"search"}
+                    size={50}
+                    color={"black"}
+                    style={{ marginLeft: "5%", marginTop: "5%" }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </Modal>
+          </Portal>
+        </Provider>
+      </View>
     </SafeAreaView>
   );
 };
@@ -234,7 +446,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight / 100 : 0,
   },
   recipeButtonClosed: {
     alignSelf: "center",
@@ -283,6 +495,29 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "InriaSans_700Bold",
     fontSize: 22,
+  },
+  searchAddInput: {
+    height: 60,
+    width: "70%",
+    alignSelf: "center",
+    margin: 12,
+    borderWidth: 0,
+    padding: 8,
+    backgroundColor: "#D4D4D4",
+    borderRadius: 9,
+  },
+  searchInput: {
+    height: 60,
+    width: "80%",
+    alignSelf: "center",
+    justifyContent: "center",
+    borderWidth: 0,
+    padding: 8,
+    backgroundColor: "#D4D4D4",
+    borderRadius: 9,
+  },
+  regularText: {
+    fontFamily: "InriaSans_400Regular",
   },
 });
 
