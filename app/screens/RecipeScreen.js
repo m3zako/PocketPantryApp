@@ -640,7 +640,9 @@ const RecipeScreen = ({ route, navigation }) => {
                     onEndReached={updateAddRecipes}
                     onEndReachedThreshold={0.8}
                   />
-                ) : null}
+                ) : (
+                  <Text>{addError}</Text>
+                )}
               </View>
             </Modal>
           </Portal>
