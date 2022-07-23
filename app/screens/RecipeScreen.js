@@ -13,15 +13,29 @@ import {
   Button,
   Dimensions,
   TextInput,
-  List,
+  ListItem,
   Alert,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Menu, Provider, Portal, Modal } from "react-native-paper";
+import {
+  Menu,
+  Provider,
+  Portal,
+  Modal,
+  ActivityIndicator,
+} from "react-native-paper";
+import { SPOONACULAR_KEY } from "@env";
 
 function RecipeButton(props) {
+  let name = "";
+
+  if (props.name.length > 10) {
+    name = props.name.substring(0, 10) + "...";
+  } else {
+    name = props.name;
+  }
   const [isPressed, setPressed] = useState(false);
   if (!isPressed) {
     return (
@@ -39,7 +53,7 @@ function RecipeButton(props) {
           }}
         >
           <Image
-            source={require("../assets/image-6.png")}
+            source={{ uri: props.image }}
             style={{
               resizeMode: "contain",
               marginLeft: "-18%",
@@ -49,61 +63,162 @@ function RecipeButton(props) {
               height: "80%",
             }}
           />
-          <Text style={styles.recipeButtonText}>{props.name}</Text>
+          <Text style={styles.recipeButtonText}>{name}</Text>
         </View>
       </TouchableHighlight>
     );
   } else {
     return (
-      <View style={styles.recipeButtonOpen}>
+      <View
+        style={[
+          styles.recipeButtonOpen,
+          {
+            justifyContent: "space-between",
+            flex: 1,
+            flexDirection: "row",
+          },
+        ]}
+      >
+        <Image
+          source={{ uri: props.image }}
+          style={{
+            resizeMode: "contain",
+            marginTop: "4%",
+            marginRight: "-20%",
+            marginLeft: "-17.5%",
+            width: "75%",
+            height: "75%",
+          }}
+        />
+        <View style={{ flex: 1 }}>
+          <Text style={styles.recipeName}>{props.name}</Text>
+          <Text style={styles.recipeDescription}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Pellentesque bibendum maximus tortor a ornare. Phasellus mattis orci
+            eu auctor molestie.
+          </Text>
+        </View>
         <TouchableOpacity
           onPress={() => {
             setPressed(!isPressed);
           }}
           style={{
-            alignSelf: "flex-end",
+            alignSelf: "flex-start",
             marginRight: "2.5%",
             marginTop: "2.5%",
           }}
         >
           <Icon name={"close"} size={30} color={"black"} />
         </TouchableOpacity>
-        <Image
-          source={require("../assets/image-9.png")}
-          style={{
-            resizeMode: "contain",
-            alignSelf: "center",
-            height: "30%",
-            marginTop: "-1.5%",
-            marginBottom: "-1.5%",
-          }}
-        />
-        <Text style={styles.recipeName}>{props.name}</Text>
-        <Text style={styles.recipeDescription}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque
-          bibendum maximus tortor a ornare. Phasellus mattis orci eu auctor
-          molestie. In hac habitasse platea dictumst. Aliquam enim ante, egestas
-          dapibus sem at, tristique ullamcorper erat. Suspendisse sollicitudin
-          eros sit amet nisl consequat, eu vulputate est viverra. Aenean
-          pharetra vulputate libero, sit amet vehicula tortor tempus vel. Sed
-          tempor, velit dapibus nam.
-        </Text>
       </View>
     );
   }
+}
+
+function RecipeSearchResult(props) {
+  let name = "";
+  if (props.name.length > 15) {
+    name = props.name.substring(0, 15) + "...";
+  } else {
+    name = props.name;
+  }
+
+  const [error, setError] = useState("");
+
+  const addRecipe = () => {
+    setError("");
+    const url = "https://pocketpantryapp.herokuapp.com/api/recipe/addRecipe";
+    let data = {
+      UserId: props.userID,
+      RecipeId: props.id,
+      Name: props.name,
+      Image: props.imageURL,
+    };
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${props.token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (response && response.data) {
+            console.log(response.data);
+          }
+        }
+      })
+      .catch((error) => {
+        setError("Unable to add recipe");
+        console.log(userID);
+        console.log(token);
+
+        console.log(userID._W);
+        console.log(token._W);
+
+        console.log(error);
+      });
+  };
+
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        marginBottom: "10%",
+      }}
+    >
+      <TouchableHighlight style={styles.fixedSquareRatio} onPress={addRecipe}>
+        <View>
+          <Image
+            source={{ uri: props.imageURL }}
+            style={{
+              width: "100%",
+              height: "100%",
+              marginLeft: "20%",
+              borderRadius: 100,
+            }}
+          />
+          <View style={{ position: "absolute", top: 20, left: 37.5 }}>
+            <Icon
+              name={"add"}
+              size={50}
+              color={"black"}
+              backgroundColor={"rgba(255, 255, 255, 0.75)"}
+              style={{ borderRadius: 100 }}
+            />
+          </View>
+        </View>
+      </TouchableHighlight>
+      <Text
+        style={{
+          fontFamily: "InriaSans_700Bold",
+          fontSize: 25,
+          marginLeft: "10%",
+          alignSelf: "center",
+        }}
+      >
+        {name}
+      </Text>
+    </View>
+  );
 }
 
 const RecipeScreen = ({ route, navigation }) => {
   let { userID, token } = route.params;
 
   const [recipes, setRecipes] = useState([]);
+  const [addRecipes, setAddRecipes] = useState([]);
   const [error, setError] = useState("");
   const [addError, setAddError] = useState("");
   const [search, setSearch] = useState("");
   const [addSearch, setAddSearch] = useState("");
+  const [offset, setOffset] = useState(0);
   const [menuVisible, setMenuVisible] = useState(false);
   const [addVisible, setAddVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
 
   const closeMenu = () => setMenuVisible(false);
   const openMenu = () => setMenuVisible(true);
@@ -160,6 +275,102 @@ const RecipeScreen = ({ route, navigation }) => {
       });
   }
 
+  const updateAddRecipes = () => {
+    if (offset >= 5) {
+      setOffset(offset + 10);
+    } else {
+      setOffset(offset + 5);
+    }
+    setAddLoading(true);
+
+    setAddError("");
+
+    const url =
+      "https://api.spoonacular.com/recipes/complexSearch?apiKey=" +
+      SPOONACULAR_KEY +
+      "&query=" +
+      addSearch +
+      "&number=10&offset=" +
+      offset;
+
+    axios
+      .get(url)
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (
+            response &&
+            response.data &&
+            response.data.results &&
+            response.data.results[0]
+          ) {
+            console.log(response.data.results);
+            setAddRecipes([...addRecipes, ...response.data.results]);
+            setAddLoading(false);
+          }
+          setAddLoading(false);
+        }
+      })
+      .catch((addError) => {
+        setAddError(addError);
+        console.log(addError);
+        setAddLoading(false);
+      });
+  };
+
+  function onlySpaces(str) {
+    return str.trim().length === 0;
+  }
+
+  const searchAddRecipes = () => {
+    setAddError("");
+    setOffset(0);
+
+    if (onlySpaces(addSearch)) {
+      setAddError("Please Enter A Valid Search Query");
+      console.log(addError);
+      return;
+    }
+
+    let query = addSearch.trim();
+
+    const url =
+      "https://api.spoonacular.com/recipes/complexSearch?apiKey=" +
+      SPOONACULAR_KEY +
+      "&query=" +
+      query +
+      "&number=5";
+
+    console.log(url);
+
+    axios
+      .get(url)
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (
+            response &&
+            response.data &&
+            response.data.results &&
+            response.data.results[0]
+          ) {
+            console.log(response.data.results);
+            setAddRecipes(response.data.results);
+            console.log(addRecipes);
+          } else {
+            setAddError("No Results");
+            console.log(addError);
+          }
+        }
+      })
+      .catch((addError) => {
+        setAddError(addError);
+        console.log(addError);
+      });
+  };
+
   const searchRecipes = () => {
     setError("");
 
@@ -212,6 +423,14 @@ const RecipeScreen = ({ route, navigation }) => {
     });
   };
 
+  const renderLoader = () => {
+    return addLoading ? (
+      <View style={{ marginVertical: 16, alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#aaa" />
+      </View>
+    ) : null;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -220,7 +439,7 @@ const RecipeScreen = ({ route, navigation }) => {
           backgroundColor: "#fefae0",
           marginBottom: 4,
           flexDirection: "row",
-          height: Dimensions.get("window").height / 6,
+          flex: 1,
         }}
       >
         <Text
@@ -237,7 +456,7 @@ const RecipeScreen = ({ route, navigation }) => {
       <View
         style={{
           backgroundColor: "white",
-          height: (Dimensions.get("window").height * 2) / 3,
+          flex: 4,
         }}
       >
         {error == "" || error == undefined ? (
@@ -245,9 +464,10 @@ const RecipeScreen = ({ route, navigation }) => {
             data={recipes}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => {
-              return <RecipeButton name={item.Name} />;
+              return <RecipeButton name={item.Name} image={item.Image} />;
             }}
             contentContainerStyle={{ flexGrow: 1 }}
+            extraData={[...recipes]}
           />
         ) : (
           <Text style={styles.errorTextStyle}>{error}</Text>
@@ -259,7 +479,7 @@ const RecipeScreen = ({ route, navigation }) => {
           elevation: 4,
           backgroundColor: "#fefae0",
           flexDirection: "row",
-          height: Dimensions.get("window").height / 6,
+          flex: 1,
         }}
       >
         <View
@@ -315,7 +535,7 @@ const RecipeScreen = ({ route, navigation }) => {
               anchor={
                 <TouchableOpacity
                   onPress={openMenu}
-                  style={{ top: "65%", left: "30%" }}
+                  style={{ top: "110%", left: "30%" }}
                 >
                   <Icon name={"menu"} size={50} color={"black"} />
                 </TouchableOpacity>
@@ -373,12 +593,12 @@ const RecipeScreen = ({ route, navigation }) => {
               visible={addVisible}
               onDismiss={hideAddModal}
               contentContainerStyle={{
-                backgroundColor: "white",
+                backgroundColor: "#FFC08E",
                 width: "85%",
                 height: "90%",
                 alignSelf: "center",
                 borderRadius: 10,
-                marginTop: Platform.OS === "android" ? "-20%" : 0,
+                marginTop: Platform.OS === "android" ? "-10%" : 0,
               }}
             >
               <View
@@ -393,14 +613,35 @@ const RecipeScreen = ({ route, navigation }) => {
                   placeholder="Search..."
                   onChangeText={(addSearch) => setAddSearch(addSearch)}
                 />
-                <Icon
-                  name={"search"}
-                  size={50}
-                  color={"black"}
-                  style={{ marginTop: "30%" }}
-                />
+                <TouchableOpacity onPress={searchAddRecipes}>
+                  <Icon
+                    name={"search"}
+                    size={50}
+                    color={"black"}
+                    style={{ marginTop: "50%" }}
+                  />
+                </TouchableOpacity>
               </View>
-              <View style={{ flex: 5 }}></View>
+              <View style={{ flex: 5 }}>
+                {addError == "" || addError == undefined ? (
+                  <FlatList
+                    data={addRecipes}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                      <RecipeSearchResult
+                        name={item.title}
+                        imageURL={item.image}
+                        id={item.id}
+                        userID={userID}
+                        token={token}
+                      />
+                    )}
+                    ListFooterComponent={renderLoader}
+                    onEndReached={updateAddRecipes}
+                    onEndReachedThreshold={0.8}
+                  />
+                ) : null}
+              </View>
             </Modal>
           </Portal>
         </Provider>
@@ -446,25 +687,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   recipeButtonClosed: {
     alignSelf: "center",
     borderRadius: 10,
     width: "95%",
-    height: "50%",
+    height: "80%",
     backgroundColor: "#FFC08E",
     marginTop: "5%",
     elevation: 4,
+    marginBottom: "-60%",
   },
   recipeButtonOpen: {
     alignSelf: "center",
     borderRadius: 10,
     width: "95%",
-    height: "90%",
+    height: "80%",
     backgroundColor: "#D0ECC7",
     marginTop: "5%",
     elevation: 4,
+    marginBottom: "5%",
   },
   recipeButtonText: {
     fontSize: 30,
@@ -477,12 +720,15 @@ const styles = StyleSheet.create({
     fontFamily: "InriaSans_700Bold",
     textDecorationLine: "underline",
     marginLeft: "4%",
+    textAlign: "center",
   },
   recipeDescription: {
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: "InriaSans_700Bold",
     marginLeft: "4%",
     marginRight: "4%",
+    width: "100%",
+    textAlign: "center",
   },
   activeScreenText: {
     fontSize: 30,
@@ -518,6 +764,10 @@ const styles = StyleSheet.create({
   },
   regularText: {
     fontFamily: "InriaSans_400Regular",
+  },
+  fixedSquareRatio: {
+    aspectRatio: 1,
+    width: "30%",
   },
 });
 

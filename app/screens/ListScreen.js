@@ -313,7 +313,7 @@ const ListScreen = ({ route, navigation }) => {
               anchor={
                 <TouchableOpacity
                   onPress={openMenu}
-                  style={{ top: "65%", left: "30%" }}
+                  style={{ top: "110%", left: "30%" }}
                 >
                   <Icon name={"menu"} size={50} color={"black"} />
                 </TouchableOpacity>
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   activeScreenText: {
     fontSize: 30,
