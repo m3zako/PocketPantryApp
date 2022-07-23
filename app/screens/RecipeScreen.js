@@ -641,7 +641,7 @@ const RecipeScreen = ({ route, navigation }) => {
                     onEndReachedThreshold={0.8}
                   />
                 ) : (
-                  <Text>{addError}</Text>
+                  <Text style={styles.errorTextStyle}>{addError}</Text>
                 )}
               </View>
             </Modal>
