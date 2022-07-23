@@ -308,7 +308,7 @@ const RecipeScreen = ({ route, navigation }) => {
               anchor={
                 <TouchableOpacity
                   onPress={openMenu}
-                  style={{ top: "65%", left: "25%" }}
+                  style={{ top: "110%", left: "25%" }}
                 >
                   <Icon name={"menu"} size={50} color={"black"} />
                 </TouchableOpacity>
@@ -375,9 +375,7 @@ const RecipeScreen = ({ route, navigation }) => {
                 alignSelf: "center",
                 borderRadius: 10,
                 marginTop:
-                  Platform.OS === "android"
-                    ? -StatusBar.currentHeight * 2.75
-                    : 0,
+                  Platform.OS === "android" ? -StatusBar.currentHeight : 0,
               }}
             >
               <View
@@ -446,7 +444,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight / 100 : 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   recipeButtonClosed: {
     alignSelf: "center",
