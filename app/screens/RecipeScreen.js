@@ -20,7 +20,6 @@ import { Icon } from "@rneui/themed";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Menu, Provider, Portal, Modal } from "react-native-paper";
-import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
 
 function RecipeButton(props) {
   const [isPressed, setPressed] = useState(false);
@@ -161,7 +160,7 @@ const RecipeScreen = ({ route, navigation }) => {
       });
   }
 
-  const searchIngredients = () => {
+  const searchRecipes = () => {
     setError("");
 
     const url =
@@ -316,7 +315,7 @@ const RecipeScreen = ({ route, navigation }) => {
               anchor={
                 <TouchableOpacity
                   onPress={openMenu}
-                  style={{ top: "110%", left: "25%" }}
+                  style={{ top: "65%", left: "30%" }}
                 >
                   <Icon name={"menu"} size={50} color={"black"} />
                 </TouchableOpacity>
@@ -324,7 +323,7 @@ const RecipeScreen = ({ route, navigation }) => {
               style={{
                 position: "absolute",
                 left: "47.5%",
-                top: "15%",
+                top: "12.5%",
               }}
             >
               <Menu.Item
@@ -379,8 +378,7 @@ const RecipeScreen = ({ route, navigation }) => {
                 height: "90%",
                 alignSelf: "center",
                 borderRadius: 10,
-                marginTop:
-                  Platform.OS === "android" ? -StatusBar.currentHeight : 0,
+                marginTop: Platform.OS === "android" ? "-20%" : 0,
               }}
             >
               <View
@@ -415,8 +413,7 @@ const RecipeScreen = ({ route, navigation }) => {
                 backgroundColor: "#D4D4D4",
                 alignSelf: "center",
                 borderRadius: 10,
-                marginTop:
-                  Platform.OS === "android" ? -StatusBar.currentHeight : 0,
+                marginTop: Platform.OS === "android" ? "-20%" : 0,
                 height: 60,
                 width: Dimensions.get("window").width * 0.9,
               }}
@@ -428,7 +425,7 @@ const RecipeScreen = ({ route, navigation }) => {
                   placeholder="Search..."
                   onChangeText={(search) => setSearch(search)}
                 />
-                <TouchableOpacity onPress={searchIngredients}>
+                <TouchableOpacity onPress={searchRecipes}>
                   <Icon
                     name={"search"}
                     size={50}
@@ -449,7 +446,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: 0,
   },
   recipeButtonClosed: {
     alignSelf: "center",
