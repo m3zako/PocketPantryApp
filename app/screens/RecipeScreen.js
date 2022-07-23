@@ -205,6 +205,14 @@ const RecipeScreen = ({ route, navigation }) => {
       });
   };
 
+  const logOut = () => {
+    AsyncStorage.removeItem("user_id");
+    AsyncStorage.removeItem("token");
+    navigation.navigate("LoginScreen", {
+      veri: false,
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -349,10 +357,7 @@ const RecipeScreen = ({ route, navigation }) => {
                     },
                     {
                       text: "OK",
-                      onPress: () =>
-                        navigation.navigate("LoginScreen", {
-                          veri: false,
-                        }),
+                      onPress: logOut,
                     },
                   ]);
                 }}
