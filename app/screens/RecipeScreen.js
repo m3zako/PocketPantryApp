@@ -630,7 +630,7 @@ const RecipeScreen = ({ route, navigation }) => {
               })
             }
           >
-            <View style={{ alignSelf: "center" }}>
+            <View style={{ alignSelf: "center", marginLeft: "-5%" }}>
               <Text style={styles.otherScreenText}>List</Text>
             </View>
           </TouchableHighlight>
