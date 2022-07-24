@@ -218,12 +218,6 @@ function RecipeSearchResult(props) {
       })
       .catch((error) => {
         setMessage("Unable to add recipe");
-        console.log(userID);
-        console.log(token);
-
-        console.log(userID._W);
-        console.log(token._W);
-
         console.log(error);
       });
   };
@@ -289,15 +283,23 @@ const RecipeScreen = ({ route, navigation }) => {
   const [addVisible, setAddVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [addLoading, setAddLoading] = useState(false);
+  const [resultAmount, setResultAmount] = useState(0);
 
   const closeMenu = () => setMenuVisible(false);
   const openMenu = () => setMenuVisible(true);
-  const showAddModal = () => setAddVisible(true);
+  const showAddModal = () => {
+    setAddVisible(true);
+    setMenuVisible(false);
+  };
   const hideAddModal = () => {
     setAddVisible(false);
     setAddSearch("");
+    setAddRecipes([]);
   };
-  const showSearchModal = () => setSearchVisible(true);
+  const showSearchModal = () => {
+    setSearchVisible(true);
+    setMenuVisible(false);
+  };
   const hideSearchModal = () => {
     setSearchVisible(false);
     setSearch("");
@@ -352,10 +354,12 @@ const RecipeScreen = ({ route, navigation }) => {
   }
 
   const updateAddRecipes = () => {
-    if (offset >= 5) {
+    if (offset >= 5 && offset < resultAmount) {
       setOffset(offset + 10);
-    } else {
+    } else if (offset < resultAmount) {
       setOffset(offset + 5);
+    } else {
+      return;
     }
     setAddLoading(true);
 
@@ -403,6 +407,7 @@ const RecipeScreen = ({ route, navigation }) => {
   const searchAddRecipes = () => {
     setAddError("");
     setOffset(0);
+    setAddRecipes([]);
 
     if (onlySpaces(addSearch)) {
       setAddError("Please Enter A Valid Search Query");
@@ -435,6 +440,7 @@ const RecipeScreen = ({ route, navigation }) => {
           ) {
             console.log(response.data.results);
             setAddRecipes(response.data.results);
+            setResultAmount(response.data.totalResults);
             console.log(addRecipes);
           } else {
             setAddError("No Results");
@@ -474,9 +480,11 @@ const RecipeScreen = ({ route, navigation }) => {
           ) {
             console.log(response.data.SearchResults);
             setRecipes(response.data.SearchResults);
+            hideSearchModal();
           } else {
             setError("No Recipes Found");
             console.log(error);
+            hideSearchModal();
           }
         }
       })
@@ -489,6 +497,7 @@ const RecipeScreen = ({ route, navigation }) => {
         console.log(token._W);
 
         console.log(error);
+        hideSearchModal();
       });
   };
 
@@ -742,7 +751,7 @@ const RecipeScreen = ({ route, navigation }) => {
                 height: "90%",
                 alignSelf: "center",
                 borderRadius: 10,
-                marginTop: Platform.OS === "android" ? "-10%" : 0,
+                marginTop: Platform.OS === "android" ? "-20%" : 0,
               }}
             >
               <View

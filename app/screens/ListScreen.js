@@ -10,13 +10,210 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
+  Image,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { CheckBox } from "@rneui/themed";
 import axios from "axios";
 import { Menu, Provider, Portal, Modal } from "react-native-paper";
 import { Icon } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SPOONACULAR_KEY } from "@env";
+
+function IngredientSearchResult(props) {
+  let name = "";
+  if (props.name.length > 15) {
+    name = props.name.substring(0, 15) + "...";
+  } else {
+    name = props.name;
+  }
+
+  const [message, setMessage] = useState("");
+  const [unitPrompt, toggleUnitPrompt] = useState(false);
+  const [changeAmount, setChangeAmount] = useState("");
+  const [ingUnit, setIngUnit] = useState("");
+  const [unitMessage, setUnitMessage] = useState("");
+
+  let imageURL =
+    "https://spoonacular.com/cdn/ingredients_500x500/" + props.imageURL;
+
+  const addIngredient = () => {
+    setMessage("");
+    let amountToChange = parseFloat(changeAmount);
+    const url = "https://pocketpantryapp.herokuapp.com/api/list/addIngredient";
+    let data = {
+      UserId: props.userID,
+      IngredientId: props.id,
+      Name: props.name,
+      Image: props.imageURL,
+      Amount: amountToChange,
+      Unit: ingUnit,
+    };
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${props.token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (response && response.data) {
+            console.log(response.data);
+            setMessage("Ingredient Successfully Added!");
+          }
+        }
+      })
+      .catch((error) => {
+        setMessage("Unable to add ingredient");
+        console.log(props.userID);
+        console.log(props.token);
+
+        console.log(error);
+      });
+  };
+
+  const getIngInfo = () => {
+    setMessage("");
+
+    const url =
+      "https://api.spoonacular.com/food/ingredients/" +
+      props.id +
+      "/information?apiKey=" +
+      SPOONACULAR_KEY +
+      "&amount=1";
+
+    axios
+      .get(url)
+      .then((response) => {
+        console.log(response.data);
+
+        if (response.status === 200) {
+          if (
+            response &&
+            response.data &&
+            response.data.shoppingListUnits &&
+            response.data.shoppingListUnits[0]
+          ) {
+            setIngUnit(response.data.shoppingListUnits[0]);
+          } else if (
+            response &&
+            response.data &&
+            response.data.possibleUnits &&
+            response.data.possibleUnits[0]
+          ) {
+            setIngUnit(response.data.possibleUnits[0]);
+          } else {
+            setMessage("No Results");
+            console.log(message);
+          }
+        }
+      })
+      .catch((error) => {
+        setMessage(toString(error));
+        console.log(error);
+      });
+  };
+
+  const openUnitPrompt = () => {
+    setMessage("");
+    setChangeAmount("");
+    getIngInfo();
+    setUnitMessage("How many " + ingUnit + "s?");
+    if (ingUnit != "" && ingUnit != undefined) {
+      toggleUnitPrompt(true);
+    } else {
+      setMessage("Try again");
+    }
+  };
+
+  const closeUnitPrompt = () => {
+    toggleUnitPrompt(false);
+    setChangeAmount("");
+  };
+
+  if (!unitPrompt) {
+    return (
+      <View style={{ marginBottom: "10%" }}>
+        <View
+          style={{
+            flexDirection: "row",
+          }}
+        >
+          <TouchableOpacity
+            style={styles.fixedSquareRatio}
+            onPress={openUnitPrompt}
+          >
+            <View>
+              <Image
+                source={{ uri: imageURL }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  marginLeft: "20%",
+                  borderRadius: 100,
+                }}
+              />
+              <View style={{ position: "absolute", top: 20, left: 37.5 }}>
+                <Icon
+                  name={"add"}
+                  size={50}
+                  color={"black"}
+                  backgroundColor={"rgba(255, 255, 255, 0.75)"}
+                  style={{ borderRadius: 100 }}
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <Text
+            style={{
+              fontFamily: "InriaSans_700Bold",
+              fontSize: 25,
+              marginLeft: "10%",
+              alignSelf: "center",
+            }}
+          >
+            {name}
+          </Text>
+        </View>
+        {message == "" || message == undefined ? null : (
+          <Text style={styles.errorTextStyle}>{message}</Text>
+        )}
+      </View>
+    );
+  } else
+    return (
+      <View style={{ marginBottom: "10%" }}>
+        <View style={{ flexDirection: "row" }}>
+          <TextInput
+            style={[styles.regularText, styles.searchChangeAddInput]}
+            fontSize={20}
+            placeholder={unitMessage}
+            onChangeText={(changeAmount) => setChangeAmount(changeAmount)}
+            keyboardType="number-pad"
+          />
+          <TouchableOpacity
+            style={{ marginTop: "6%", marginLeft: "2%" }}
+            onPress={addIngredient}
+          >
+            <Icon name={"add"} size={30} color={"black"} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ marginTop: "6%", marginLeft: "2%" }}
+            onPress={closeUnitPrompt}
+          >
+            <Icon name={"close"} size={30} color={"black"} />
+          </TouchableOpacity>
+        </View>
+        {message == "" || message == undefined ? null : (
+          <Text style={styles.errorTextStyle}>{message}</Text>
+        )}
+      </View>
+    );
+}
 
 function ShoppingCheckBoxListEntry(props) {
   const [isChecked, setChecked] = useState(props.checked);
@@ -27,10 +224,14 @@ function ShoppingCheckBoxListEntry(props) {
   let testString = "Ingredient";
   let i = 0;
   let fillerString = "";
-  let ingName = props.name;
+  let ingName = props.name.charAt(0).toUpperCase() + props.name.slice(1);
   let fillerAmount = testString.length - props.name.length;
   let unitName = props.unit;
   let amountName = props.amount;
+  let unitMessage = "How many " + props.unit + "s?";
+  if (props.amount > 1) {
+    unitName = unitName + "s";
+  }
 
   for (i = 0; i < fillerAmount; i++) {
     fillerString = fillerString + "  ";
@@ -76,6 +277,44 @@ function ShoppingCheckBoxListEntry(props) {
         }
       })
       .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const addItem = () => {
+    setMessage("");
+    let amountToChange = parseFloat(props.amount);
+    const url = "https://pocketpantryapp.herokuapp.com/api/list/addIngredient";
+    let data = {
+      UserId: props.uID,
+      IngredientId: props.ingID,
+      Name: props.name,
+      Image: props.imageURL,
+      Amount: amountToChange,
+      Unit: unitName,
+    };
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${props.token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (response && response.data) {
+            console.log(response.data);
+            setMessage("Amount Successfully Added!");
+          }
+        }
+      })
+      .catch((error) => {
+        setMessage("Unable to add amount");
+        console.log(props.userID);
+        console.log(props.token);
+
         console.log(error);
       });
   };
@@ -160,6 +399,7 @@ function ShoppingCheckBoxListEntry(props) {
   const closeChange = () => {
     setChangeToggle(false);
     setChangeAmount("");
+    setMessage("");
   };
 
   if (!changeToggle) {
@@ -225,11 +465,14 @@ function ShoppingCheckBoxListEntry(props) {
           <TextInput
             style={[styles.regularText, styles.searchChangeInput]}
             fontSize={20}
-            placeholder="How many units?"
+            placeholder={unitMessage}
             onChangeText={(changeAmount) => setChangeAmount(changeAmount)}
             keyboardType="number-pad"
           />
-          <TouchableOpacity style={{ marginTop: "6%", marginLeft: "2%" }}>
+          <TouchableOpacity
+            style={{ marginTop: "6%", marginLeft: "2%" }}
+            onPress={addItem}
+          >
             <Icon name={"add"} size={30} color={"black"} />
           </TouchableOpacity>
           <TouchableOpacity
@@ -272,6 +515,7 @@ const ListScreen = ({ route, navigation }) => {
   let { userID, token } = route.params;
 
   const [shopList, setShopList] = useState([]);
+  const [addIngredients, setAddIngredients] = useState([]);
   const [error, setError] = useState("");
   const [addError, setAddError] = useState("");
   const [search, setSearch] = useState("");
@@ -279,13 +523,29 @@ const ListScreen = ({ route, navigation }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [addVisible, setAddVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [addLoading, setAddLoading] = useState(false);
+  const [resultAmount, setResultAmount] = useState(0);
 
   const closeMenu = () => setMenuVisible(false);
   const openMenu = () => setMenuVisible(true);
-  const showAddModal = () => setAddVisible(true);
-  const hideAddModal = () => setAddVisible(false);
-  const showSearchModal = () => setSearchVisible(true);
-  const hideSearchModal = () => setSearchVisible(false);
+  const showAddModal = () => {
+    setAddVisible(true);
+    setMenuVisible(false);
+  };
+  const hideAddModal = () => {
+    setAddVisible(false);
+    setAddSearch("");
+    setAddIngredients([]);
+  };
+  const showSearchModal = () => {
+    setSearchVisible(true);
+    setMenuVisible(false);
+  };
+  const hideSearchModal = () => {
+    setSearchVisible(false);
+    setSearch("");
+  };
 
   useEffect(() => {
     loadShoppingList();
@@ -336,6 +596,104 @@ const ListScreen = ({ route, navigation }) => {
       });
   }
 
+  const updateAddIngredients = () => {
+    if (offset >= 5 && offset < resultAmount) {
+      setOffset(offset + 10);
+    } else if (offset < resultAmount) {
+      setOffset(offset + 5);
+    } else {
+      return;
+    }
+    setAddLoading(true);
+
+    setAddError("");
+
+    const url =
+      "https://api.spoonacular.com/food/ingredients/search?apiKey=" +
+      SPOONACULAR_KEY +
+      "&query=" +
+      addSearch +
+      "&number=10&sortDirection=desc&offset=" +
+      offset;
+
+    axios
+      .get(url)
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (
+            response &&
+            response.data &&
+            response.data.results &&
+            response.data.results[0]
+          ) {
+            console.log(response.data.results);
+            setAddIngredients([...addIngredients, ...response.data.results]);
+            setAddLoading(false);
+          }
+          setAddLoading(false);
+        }
+      })
+      .catch((addError) => {
+        setAddError("");
+        console.log(addError);
+        setAddLoading(false);
+      });
+  };
+
+  function onlySpaces(str) {
+    return str.trim().length === 0;
+  }
+
+  const searchAddIngredients = () => {
+    setAddError("");
+    setOffset(0);
+    setAddIngredients([]);
+
+    if (onlySpaces(addSearch)) {
+      setAddError("Please Enter A Valid Search Query");
+      console.log(addError);
+      return;
+    }
+
+    let query = addSearch.trim();
+    let i = 0;
+
+    const url =
+      "https://api.spoonacular.com/food/ingredients/search?apiKey=" +
+      SPOONACULAR_KEY +
+      "&query=" +
+      query +
+      "&number=5&sortDirection=desc";
+
+    console.log(url);
+
+    axios
+      .get(url)
+      .then((response) => {
+        if (response.status === 200) {
+          if (
+            response &&
+            response.data &&
+            response.data.results &&
+            response.data.results[0]
+          ) {
+            setAddIngredients(response.data.results);
+            setResultAmount(response.data.totalResults);
+            console.log(addIngredients);
+          } else {
+            setAddError("No Results");
+            console.log(addError);
+          }
+        }
+      })
+      .catch((addError) => {
+        setAddError(addError);
+        console.log(addError);
+      });
+  };
+
   const searchIngredients = () => {
     setError("");
 
@@ -362,9 +720,11 @@ const ListScreen = ({ route, navigation }) => {
           ) {
             console.log(response.data.SearchResults);
             setShopList(response.data.SearchResults);
+            hideSearchModal();
           } else {
             setError("No Results Found");
             console.log(error);
+            hideSearchModal();
           }
         }
       })
@@ -377,6 +737,7 @@ const ListScreen = ({ route, navigation }) => {
         console.log(token._W);
 
         console.log(error);
+        hideSearchModal();
       });
   };
 
@@ -386,6 +747,14 @@ const ListScreen = ({ route, navigation }) => {
     navigation.navigate("LoginScreen", {
       veri: false,
     });
+  };
+
+  const renderLoader = () => {
+    return addLoading ? (
+      <View style={{ marginVertical: 16, alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#aaa" />
+      </View>
+    ) : null;
   };
 
   const clearAllIngredients = () => {
@@ -614,7 +983,7 @@ const ListScreen = ({ route, navigation }) => {
               visible={addVisible}
               onDismiss={hideAddModal}
               contentContainerStyle={{
-                backgroundColor: "white",
+                backgroundColor: "#D0ECC7",
                 width: "85%",
                 height: "90%",
                 alignSelf: "center",
@@ -634,14 +1003,37 @@ const ListScreen = ({ route, navigation }) => {
                   placeholder="Search..."
                   onChangeText={(addSearch) => setAddSearch(addSearch)}
                 />
-                <Icon
-                  name={"search"}
-                  size={50}
-                  color={"black"}
-                  style={{ marginTop: "30%" }}
-                />
+                <TouchableOpacity onPress={searchAddIngredients}>
+                  <Icon
+                    name={"search"}
+                    size={50}
+                    color={"black"}
+                    style={{ marginTop: "50%" }}
+                  />
+                </TouchableOpacity>
               </View>
-              <View style={{ flex: 5 }}></View>
+              <View style={{ flex: 5 }}>
+                {addError == "" || addError == undefined ? (
+                  <FlatList
+                    data={addIngredients}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                      <IngredientSearchResult
+                        name={item.name}
+                        imageURL={item.image}
+                        id={item.id}
+                        userID={userID}
+                        token={token}
+                      />
+                    )}
+                    ListFooterComponent={renderLoader}
+                    onEndReached={updateAddIngredients}
+                    onEndReachedThreshold={0.8}
+                  />
+                ) : (
+                  <Text style={styles.errorTextStyle}>{addError}</Text>
+                )}
+              </View>
             </Modal>
           </Portal>
         </Provider>
@@ -743,8 +1135,24 @@ const styles = StyleSheet.create({
     marginTop: "4.5%",
     marginLeft: "4%",
   },
+  searchChangeAddInput: {
+    height: Dimensions.get("window").width * 0.125,
+    width: "70%",
+    alignSelf: "center",
+    justifyContent: "center",
+    borderWidth: 0,
+    padding: 8,
+    backgroundColor: "#D4D4D4",
+    borderRadius: 9,
+    marginTop: "4.5%",
+    marginLeft: "4%",
+  },
   regularText: {
     fontFamily: "InriaSans_400Regular",
+  },
+  fixedSquareRatio: {
+    aspectRatio: 1,
+    width: "30%",
   },
 });
 
