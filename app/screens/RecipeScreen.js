@@ -213,7 +213,7 @@ function RecipeSearchResult(props) {
           }
         }
       })
-      .catch((message) => {
+      .catch((error) => {
         setMessage("Unable to add recipe");
         console.log(userID);
         console.log(token);
@@ -221,7 +221,7 @@ function RecipeSearchResult(props) {
         console.log(userID._W);
         console.log(token._W);
 
-        console.log(message);
+        console.log(error);
       });
   };
 
