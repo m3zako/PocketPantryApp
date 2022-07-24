@@ -66,8 +66,9 @@ function RecipeButton(props) {
           }
         }
       })
-      .catch((message) => {
+      .catch((error) => {
         setMessage("Unable to delete recipe");
+        console.log(error);
       });
   };
 
@@ -580,6 +581,7 @@ const RecipeScreen = ({ route, navigation }) => {
                     desc={item.RecipeDesc}
                     RecipeId={item.RecipeId}
                     userID={userID}
+                    token={token}
                   />
                 );
               }}
