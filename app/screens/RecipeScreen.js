@@ -9,12 +9,14 @@ import {
   Platform,
   TouchableHighlight,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   FlatList,
   Button,
   Dimensions,
   TextInput,
   ListItem,
   Alert,
+  ImageEditor,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import axios from "axios";
@@ -37,6 +39,38 @@ function RecipeButton(props) {
     name = props.name;
   }
   const [isPressed, setPressed] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const deleteRecipe = () => {
+    setMessage("");
+    const url =
+      "https://pocketpantryapp.herokuapp.com/api/recipe/removeRecipeById";
+    let data = {
+      UserId: props.userID,
+      RecipeId: props.RecipeId,
+    };
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${props.token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (response && response.data) {
+            console.log(response.data);
+            setMessage("Recipe Successfully Deleted!");
+          }
+        }
+      })
+      .catch((message) => {
+        setMessage("Unable to delete recipe");
+      });
+  };
+
   if (!isPressed) {
     return (
       <TouchableHighlight
@@ -52,64 +86,90 @@ function RecipeButton(props) {
             flexDirection: "row",
           }}
         >
-          <Image
-            source={{ uri: props.image }}
-            style={{
-              resizeMode: "contain",
-              marginLeft: "-18%",
-              marginTop: "3.5%",
-              marginRight: "-15%",
-              width: "80%",
-              height: "80%",
-            }}
-          />
+          <View
+            style={[
+              styles.fixedSquareRatio,
+              { marginLeft: "5%", marginTop: "2.5%" },
+            ]}
+          >
+            <Image
+              source={{ uri: props.image }}
+              style={{
+                resizeMode: "contain",
+                width: "125%",
+                height: "125%",
+              }}
+            />
+          </View>
           <Text style={styles.recipeButtonText}>{name}</Text>
         </View>
       </TouchableHighlight>
     );
   } else {
     return (
-      <View
-        style={[
-          styles.recipeButtonOpen,
-          {
-            justifyContent: "space-between",
-            flex: 1,
-            flexDirection: "row",
-          },
-        ]}
-      >
-        <Image
-          source={{ uri: props.image }}
-          style={{
-            resizeMode: "contain",
-            marginTop: "4%",
-            marginRight: "-20%",
-            marginLeft: "-17.5%",
-            width: "75%",
-            height: "75%",
-          }}
-        />
-        <View style={{ flex: 1 }}>
-          <Text style={styles.recipeName}>{props.name}</Text>
-          <Text style={styles.recipeDescription}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque bibendum maximus tortor a ornare. Phasellus mattis orci
-            eu auctor molestie.
-          </Text>
+      <View style={styles.recipeButtonOpen}>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            onPress={() =>
+              Alert.alert(
+                `Delete ${props.name}`,
+                `Are you sure you want to clear the ${props.name} recipe?`,
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel",
+                  },
+                  {
+                    text: "OK",
+                    onPress: deleteRecipe,
+                  },
+                ]
+              )
+            }
+            style={{
+              alignSelf: "flex-end",
+              marginLeft: "80%",
+              marginTop: "2.5%",
+            }}
+          >
+            <Icon name={"delete"} size={30} color={"black"} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setPressed(!isPressed);
+            }}
+            style={{
+              alignSelf: "flex-end",
+              marginLeft: "0%",
+              marginTop: "2.5%",
+            }}
+          >
+            <Icon name={"close"} size={30} color={"black"} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            setPressed(!isPressed);
-          }}
+        <View
           style={{
-            alignSelf: "flex-start",
-            marginRight: "2.5%",
-            marginTop: "2.5%",
+            height: "20%",
+            width: "90%",
+            marginLeft: "5%",
           }}
         >
-          <Icon name={"close"} size={30} color={"black"} />
-        </TouchableOpacity>
+          <Image
+            source={{ uri: props.image }}
+            style={{
+              resizeMode: "cover",
+              alignSelf: "center",
+              height: "100%",
+              width: "100%",
+              borderRadius: 10,
+            }}
+          />
+        </View>
+        <Text style={styles.recipeName}>{props.name}</Text>
+        <Text style={styles.recipeDescription}>
+          {message == "" || message == undefined ? props.desc : message}
+        </Text>
       </View>
     );
   }
@@ -123,16 +183,17 @@ function RecipeSearchResult(props) {
     name = props.name;
   }
 
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   const addRecipe = () => {
-    setError("");
+    setMessage("");
     const url = "https://pocketpantryapp.herokuapp.com/api/recipe/addRecipe";
     let data = {
       UserId: props.userID,
       RecipeId: props.id,
       Name: props.name,
       Image: props.imageURL,
+      RecipeDesc: props.desc,
     };
 
     axios
@@ -147,60 +208,65 @@ function RecipeSearchResult(props) {
         if (response.status === 200) {
           if (response && response.data) {
             console.log(response.data);
+            setMessage("Recipe Successfully Added!");
           }
         }
       })
-      .catch((error) => {
-        setError("Unable to add recipe");
+      .catch((message) => {
+        setMessage("Unable to add recipe");
         console.log(userID);
         console.log(token);
 
         console.log(userID._W);
         console.log(token._W);
 
-        console.log(error);
+        console.log(message);
       });
   };
 
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        marginBottom: "10%",
-      }}
-    >
-      <TouchableHighlight style={styles.fixedSquareRatio} onPress={addRecipe}>
-        <View>
-          <Image
-            source={{ uri: props.imageURL }}
-            style={{
-              width: "100%",
-              height: "100%",
-              marginLeft: "20%",
-              borderRadius: 100,
-            }}
-          />
-          <View style={{ position: "absolute", top: 20, left: 37.5 }}>
-            <Icon
-              name={"add"}
-              size={50}
-              color={"black"}
-              backgroundColor={"rgba(255, 255, 255, 0.75)"}
-              style={{ borderRadius: 100 }}
-            />
-          </View>
-        </View>
-      </TouchableHighlight>
-      <Text
+    <View style={{ marginBottom: "10%" }}>
+      <View
         style={{
-          fontFamily: "InriaSans_700Bold",
-          fontSize: 25,
-          marginLeft: "10%",
-          alignSelf: "center",
+          flexDirection: "row",
         }}
       >
-        {name}
-      </Text>
+        <TouchableOpacity style={styles.fixedSquareRatio} onPress={addRecipe}>
+          <View>
+            <Image
+              source={{ uri: props.imageURL }}
+              style={{
+                width: "100%",
+                height: "100%",
+                marginLeft: "20%",
+                borderRadius: 100,
+              }}
+            />
+            <View style={{ position: "absolute", top: 20, left: 37.5 }}>
+              <Icon
+                name={"add"}
+                size={50}
+                color={"black"}
+                backgroundColor={"rgba(255, 255, 255, 0.75)"}
+                style={{ borderRadius: 100 }}
+              />
+            </View>
+          </View>
+        </TouchableOpacity>
+        <Text
+          style={{
+            fontFamily: "InriaSans_700Bold",
+            fontSize: 25,
+            marginLeft: "10%",
+            alignSelf: "center",
+          }}
+        >
+          {name}
+        </Text>
+      </View>
+      {message == "" || message == undefined ? null : (
+        <Text style={styles.errorTextStyle}>{message}</Text>
+      )}
     </View>
   );
 }
@@ -223,9 +289,15 @@ const RecipeScreen = ({ route, navigation }) => {
   const closeMenu = () => setMenuVisible(false);
   const openMenu = () => setMenuVisible(true);
   const showAddModal = () => setAddVisible(true);
-  const hideAddModal = () => setAddVisible(false);
+  const hideAddModal = () => {
+    setAddVisible(false);
+    setAddSearch("");
+  };
   const showSearchModal = () => setSearchVisible(true);
-  const hideSearchModal = () => setSearchVisible(false);
+  const hideSearchModal = () => {
+    setSearchVisible(false);
+    setSearch("");
+  };
 
   useEffect(() => {
     loadRecipes();
@@ -291,7 +363,8 @@ const RecipeScreen = ({ route, navigation }) => {
       "&query=" +
       addSearch +
       "&number=10&offset=" +
-      offset;
+      offset +
+      "&addRecipeInformation=true";
 
     axios
       .get(url)
@@ -313,7 +386,7 @@ const RecipeScreen = ({ route, navigation }) => {
         }
       })
       .catch((addError) => {
-        setAddError(addError);
+        setAddError("");
         console.log(addError);
         setAddLoading(false);
       });
@@ -340,7 +413,7 @@ const RecipeScreen = ({ route, navigation }) => {
       SPOONACULAR_KEY +
       "&query=" +
       query +
-      "&number=5";
+      "&number=5&addRecipeInformation=true";
 
     console.log(url);
 
@@ -431,13 +504,48 @@ const RecipeScreen = ({ route, navigation }) => {
     ) : null;
   };
 
+  const clearAllRecipes = () => {
+    setError("");
+
+    const url = "https://pocketpantryapp.herokuapp.com/api/recipe/clearRecipes";
+
+    let data = { UserId: userID };
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (response && response.data) {
+            setError("No Recipes Found");
+            console.log(error);
+          }
+        }
+      })
+      .catch((error) => {
+        setError("Unable to find user by ID " + userID);
+        console.log(userID);
+        console.log(token);
+
+        console.log(userID._W);
+        console.log(token._W);
+
+        console.log(error);
+      });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fefae0" />
       <View
         style={{
           elevation: 4,
           backgroundColor: "#fefae0",
-          marginBottom: 4,
           flexDirection: "row",
           flex: 1,
         }}
@@ -459,19 +567,28 @@ const RecipeScreen = ({ route, navigation }) => {
           flex: 4,
         }}
       >
-        {error == "" || error == undefined ? (
-          <FlatList
-            data={recipes}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => {
-              return <RecipeButton name={item.Name} image={item.Image} />;
-            }}
-            contentContainerStyle={{ flexGrow: 1 }}
-            extraData={[...recipes]}
-          />
-        ) : (
-          <Text style={styles.errorTextStyle}>{error}</Text>
-        )}
+        <View style={{ flexGrow: 1 }}>
+          {error == "" || error == undefined ? (
+            <FlatList
+              data={recipes}
+              keyExtractor={(item) => item._id}
+              renderItem={({ item }) => {
+                return (
+                  <RecipeButton
+                    name={item.Name}
+                    image={item.Image}
+                    desc={item.RecipeDesc}
+                    RecipeId={item.RecipeId}
+                    userID={userID}
+                  />
+                );
+              }}
+              contentContainerStyle={{ flexGrow: 1 }}
+            />
+          ) : (
+            <Text style={styles.errorTextStyle}>{error}</Text>
+          )}
+        </View>
       </View>
 
       <View
@@ -495,27 +612,35 @@ const RecipeScreen = ({ route, navigation }) => {
         >
           <Text style={styles.activeScreenText}>Recipes</Text>
         </View>
-        <TouchableHighlight
-          style={{
-            flexDirection: "row",
-            backgroundColor: "#C4EFC8",
-            height: "45%",
-            width: "50%",
-            elevation: 4,
-            justifyContent: "center",
-            borderRadius: 5,
-          }}
-          onPress={() =>
-            navigation.navigate("ListScreen", {
-              userID: userID,
-              token: token,
-            })
-          }
+        <View>
+          <TouchableHighlight
+            style={{
+              flexDirection: "row",
+              backgroundColor: "#C4EFC8",
+              height: "45%",
+              width: "100%",
+              elevation: 4,
+              justifyContent: "center",
+              borderRadius: 5,
+            }}
+            onPress={() =>
+              navigation.navigate("ListScreen", {
+                userID: userID,
+                token: token,
+              })
+            }
+          >
+            <View style={{ alignSelf: "center" }}>
+              <Text style={styles.otherScreenText}>List</Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+        <TouchableOpacity
+          style={{ position: "absolute", top: "60%", left: "45%" }}
+          onPress={loadRecipes}
         >
-          <View style={{ alignSelf: "center" }}>
-            <Text style={styles.otherScreenText}>List</Text>
-          </View>
-        </TouchableHighlight>
+          <Icon name={"refresh"} size={30} color={"black"} />
+        </TouchableOpacity>
       </View>
       <View
         style={{
@@ -535,7 +660,7 @@ const RecipeScreen = ({ route, navigation }) => {
               anchor={
                 <TouchableOpacity
                   onPress={openMenu}
-                  style={{ top: "110%", left: "30%" }}
+                  style={{ top: "65%", left: "30%" }}
                 >
                   <Icon name={"menu"} size={50} color={"black"} />
                 </TouchableOpacity>
@@ -560,7 +685,21 @@ const RecipeScreen = ({ route, navigation }) => {
               />
               <Menu.Item
                 onPress={() => {
-                  Alert.alert("Action", "Clear All");
+                  Alert.alert(
+                    "Clear All",
+                    "Are you sure you want to clear all of the recipes?",
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel",
+                      },
+                      {
+                        text: "OK",
+                        onPress: clearAllRecipes,
+                      },
+                    ]
+                  );
                 }}
                 title="Clear All"
                 icon="delete"
@@ -634,6 +773,7 @@ const RecipeScreen = ({ route, navigation }) => {
                         id={item.id}
                         userID={userID}
                         token={token}
+                        desc={item.summary}
                       />
                     )}
                     ListFooterComponent={renderLoader}
@@ -689,23 +829,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   recipeButtonClosed: {
     alignSelf: "center",
     borderRadius: 10,
-    width: "95%",
-    height: "80%",
+    width: Dimensions.get("window").width * 0.9,
+    height: Dimensions.get("window").height * 0.2,
     backgroundColor: "#FFC08E",
     marginTop: "5%",
     elevation: 4,
-    marginBottom: "-60%",
+    marginBottom: "5%",
   },
   recipeButtonOpen: {
     alignSelf: "center",
     borderRadius: 10,
-    width: "95%",
-    height: "80%",
+    width: Dimensions.get("window").width * 0.9,
+    height: Dimensions.get("window").height * 0.5,
     backgroundColor: "#D0ECC7",
     marginTop: "5%",
     elevation: 4,
@@ -713,23 +852,24 @@ const styles = StyleSheet.create({
   },
   recipeButtonText: {
     fontSize: 30,
+    marginLeft: "10%",
     marginRight: "18%",
-    marginTop: "12.5%",
+    marginTop: "15%",
     fontFamily: "InriaSans_400Regular",
   },
   recipeName: {
     fontSize: 24,
     fontFamily: "InriaSans_700Bold",
     textDecorationLine: "underline",
-    marginLeft: "4%",
+    marginLeft: "0%",
     textAlign: "center",
   },
   recipeDescription: {
     fontSize: 15,
     fontFamily: "InriaSans_700Bold",
-    marginLeft: "4%",
-    marginRight: "4%",
-    width: "100%",
+    marginLeft: "5%",
+    marginTop: "2.5%",
+    width: "90%",
     textAlign: "center",
   },
   activeScreenText: {

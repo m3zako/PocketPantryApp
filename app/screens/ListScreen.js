@@ -202,12 +202,12 @@ const ListScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fefae0" />
       <View
         style={{
           elevation: 4,
           backgroundColor: "#fefae0",
-          marginBottom: 4,
-          height: Dimensions.get("window").height / 6,
+          flex: 1,
         }}
       >
         <Text
@@ -225,7 +225,7 @@ const ListScreen = ({ route, navigation }) => {
       <View
         style={{
           backgroundColor: "white",
-          height: (Dimensions.get("window").height * 2) / 3,
+          flex: 4,
         }}
       >
         {error == "" || error == undefined ? (
@@ -257,7 +257,7 @@ const ListScreen = ({ route, navigation }) => {
           elevation: 4,
           backgroundColor: "#fefae0",
           flexDirection: "row",
-          height: Dimensions.get("window").height / 6,
+          flex: 1,
         }}
       >
         <TouchableHighlight
@@ -313,7 +313,7 @@ const ListScreen = ({ route, navigation }) => {
               anchor={
                 <TouchableOpacity
                   onPress={openMenu}
-                  style={{ top: "110%", left: "30%" }}
+                  style={{ top: "65%", left: "30%" }}
                 >
                   <Icon name={"menu"} size={50} color={"black"} />
                 </TouchableOpacity>
@@ -444,7 +444,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   activeScreenText: {
     fontSize: 30,
