@@ -13,6 +13,7 @@ import {
   Dimensions,
   TextInput,
   Alert,
+  ScrollView,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import axios from "axios";
@@ -111,7 +112,13 @@ function RecipeButton(props) {
     );
   } else {
     return (
-      <View style={styles.recipeButtonOpen}>
+      <ScrollView
+        style={styles.recipeButtonOpen}
+        contentContainerStyle={{
+          flexGrow: 1,
+          //paddingBottom: props.desc.length / 50,
+        }}
+      >
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
             onPress={() =>
@@ -154,7 +161,7 @@ function RecipeButton(props) {
         </View>
         <View
           style={{
-            height: "20%",
+            height: Dimensions.get("window").height / 10,
             width: "90%",
             marginLeft: "5%",
           }}
@@ -174,7 +181,7 @@ function RecipeButton(props) {
         <Text style={styles.recipeDescription}>
           {message == "" || message == undefined ? props.desc : message}
         </Text>
-      </View>
+      </ScrollView>
     );
   }
 }
