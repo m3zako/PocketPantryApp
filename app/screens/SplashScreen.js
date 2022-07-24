@@ -1,51 +1,40 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Image, Dimensions } from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleSheet, Image } from "react-native";
 import * as SplashScreens from "expo-splash-screen";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 SplashScreens.preventAutoHideAsync();
 
 let id, tok;
 
-getAsyncs = async () =>{
-
-  try{
+getAsyncs = async () => {
+  try {
     id = await AsyncStorage.getItem("user_id");
     tok = await AsyncStorage.getItem("token");
-  }
-  catch(e){
+  } catch (e) {
     id = null;
     tok = null;
   }
-
-}
+};
 
 const SplashScreen = ({ navigation }) => {
-
-
   useEffect(() => {
-
     getAsyncs();
 
     setTimeout(() => {
-
-      if(id && tok){
-        navigation.navigate("RecipeScreen", {userID: id, token: tok});
+      if (id && tok) {
+        navigation.navigate("RecipeScreen", { userID: id, token: tok });
+      } else {
+        navigation.navigate("LoginScreen", { veri: false });
       }
-      else{
-        navigation.navigate("LoginScreen", {veri: false});
-      }
-
     }, 5000);
-
   }, []);
 
   return (
     <View style={styles.container}>
-        <Image style={styles.logo} source={require("../assets/logo.jpg")} />
+      <Image style={styles.logo} source={require("../assets/logo.jpg")} />
     </View>
   );
-  
 };
 
 const styles = StyleSheet.create({

@@ -9,14 +9,10 @@ import {
   Platform,
   TouchableHighlight,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   FlatList,
-  Button,
   Dimensions,
   TextInput,
-  ListItem,
   Alert,
-  ImageEditor,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import axios from "axios";
@@ -32,11 +28,18 @@ import { SPOONACULAR_KEY } from "@env";
 
 function RecipeButton(props) {
   let name = "";
+  let longName = "";
 
   if (props.name.length > 10) {
     name = props.name.substring(0, 10) + "...";
   } else {
     name = props.name;
+  }
+
+  if (props.name.length > 30) {
+    longName = props.name.substring(0, 25) + "...";
+  } else {
+    longName = props.name;
   }
   const [isPressed, setPressed] = useState(false);
   const [message, setMessage] = useState("");
@@ -167,7 +170,7 @@ function RecipeButton(props) {
             }}
           />
         </View>
-        <Text style={styles.recipeName}>{props.name}</Text>
+        <Text style={styles.recipeName}>{longName}</Text>
         <Text style={styles.recipeDescription}>
           {message == "" || message == undefined ? props.desc : message}
         </Text>

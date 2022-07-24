@@ -21,12 +21,29 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 function ShoppingCheckBoxListEntry(props) {
   const [isChecked, setChecked] = useState(props.checked);
   const [error, setError] = useState("");
-  let fillerAmount = "Ingredient".length - props.name.length;
+  const [message, setMessage] = useState("");
+  const [changeToggle, setChangeToggle] = useState(false);
+  const [changeAmount, setChangeAmount] = useState("");
+  let testString = "Ingredient";
   let i = 0;
   let fillerString = "";
+  let ingName = props.name;
+  let fillerAmount = testString.length - props.name.length;
+  let unitName = props.unit;
+  let amountName = props.amount;
 
   for (i = 0; i < fillerAmount; i++) {
-    fillerString = fillerString + " ";
+    fillerString = fillerString + "  ";
+  }
+
+  ingName = ingName + fillerString;
+
+  if (props.name.length > testString.length) {
+    ingName = ingName.substring(0, "Ingredient".length) + "...";
+  }
+
+  if (unitName.length > 10) {
+    unitName = unitName.substring(0, 7) + "...";
   }
 
   const toggleCheck = () => {
@@ -63,22 +80,193 @@ function ShoppingCheckBoxListEntry(props) {
       });
   };
 
-  return (
-    <View style={{ flexDirection: "row" }}>
-      <CheckBox
-        checked={isChecked}
-        onPress={toggleCheck}
-        size={Dimensions.get("window").width * 0.1}
-      />
-      <Text style={styles.ingredientText}>
-        {props.name}
-        {fillerString}
-      </Text>
-      <Text style={styles.amountText}>
-        {props.amount} {props.unit}
-      </Text>
-    </View>
-  );
+  const deleteItem = () => {
+    let changeAmount = props.amount;
+    setMessage("");
+    let fullAmount = parseFloat(changeAmount);
+    const url =
+      "https://pocketpantryapp.herokuapp.com/api/list/removeIngredient";
+    let data = {
+      UserId: props.uID,
+      IngredientId: props.ingID,
+      Amount: fullAmount,
+      Unit: props.unit,
+    };
+
+    console.log(fullAmount);
+    console.log(props.uID);
+    console.log(props.ingID);
+    console.log(props.unit);
+    console.log(props.token);
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${props.token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (response && response.data) {
+            console.log(response.data);
+            setMessage("Item Successfully Deleted!");
+          }
+        }
+      })
+      .catch((error) => {
+        setMessage("Unable to delete item");
+        console.log(error);
+      });
+  };
+
+  const deleteItemSetAmount = () => {
+    setMessage("");
+
+    let amountRemoved = parseFloat(changeAmount);
+
+    const url =
+      "https://pocketpantryapp.herokuapp.com/api/list/removeIngredient";
+    let data = {
+      UserId: props.uID,
+      IngredientId: props.ingID,
+      Amount: amountRemoved,
+      Unit: props.unit,
+    };
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${props.token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (response && response.data) {
+            console.log(response.data);
+            setMessage("Item Successfully Deleted!");
+          }
+        }
+      })
+      .catch((error) => {
+        setMessage("Unable to delete item");
+        console.log(error);
+      });
+  };
+
+  const closeChange = () => {
+    setChangeToggle(false);
+    setChangeAmount("");
+  };
+
+  if (!changeToggle) {
+    return (
+      <View>
+        <View style={{ flexDirection: "row" }}>
+          <CheckBox
+            checked={isChecked}
+            onPress={toggleCheck}
+            size={Dimensions.get("window").width * 0.067}
+          />
+          <Text style={styles.ingredientText}>{ingName}</Text>
+          <Text style={styles.amountText}>
+            {amountName} {unitName}
+          </Text>
+          <TouchableOpacity
+            style={{
+              position: "absolute",
+              top: "30%",
+              left: "82.5%",
+            }}
+            onPress={() => setChangeToggle(true)}
+          >
+            <Icon
+              name={"plus-minus"}
+              size={20}
+              color={"black"}
+              type={"material-community"}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ position: "absolute", top: "30%", left: "90%" }}
+            onPress={() =>
+              Alert.alert(
+                `Remove ${props.name}`,
+                `Are you sure you want to remove ${props.name} from your shopping list?`,
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel",
+                  },
+                  {
+                    text: "OK",
+                    onPress: deleteItem,
+                  },
+                ]
+              )
+            }
+          >
+            <Icon name={"delete"} size={20} color={"black"} />
+          </TouchableOpacity>
+        </View>
+        {message == "" || message == undefined ? null : (
+          <Text style={styles.errorTextStyle}>{message}</Text>
+        )}
+      </View>
+    );
+  } else {
+    return (
+      <View>
+        <View style={{ flexDirection: "row" }}>
+          <TextInput
+            style={[styles.regularText, styles.searchChangeInput]}
+            fontSize={20}
+            placeholder="How many units?"
+            onChangeText={(changeAmount) => setChangeAmount(changeAmount)}
+            keyboardType="number-pad"
+          />
+          <TouchableOpacity style={{ marginTop: "6%", marginLeft: "2%" }}>
+            <Icon name={"add"} size={30} color={"black"} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ marginTop: "6%", marginLeft: "2%" }}
+            onPress={() =>
+              Alert.alert(
+                `Remove ${props.name}`,
+                `Are you sure you want to remove ${changeAmount} ${props.unit} of ${props.name} from your shopping list?`,
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel",
+                  },
+                  {
+                    text: "OK",
+                    onPress: deleteItemSetAmount,
+                  },
+                ]
+              )
+            }
+          >
+            <Icon name={"remove"} size={30} color={"black"} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ marginTop: "6%", marginLeft: "2%" }}
+            onPress={closeChange}
+          >
+            <Icon name={"close"} size={30} color={"black"} />
+          </TouchableOpacity>
+        </View>
+        {message == "" || message == undefined ? null : (
+          <Text style={styles.errorTextStyle}>{message}</Text>
+        )}
+      </View>
+    );
+  }
 }
 const ListScreen = ({ route, navigation }) => {
   let { userID, token } = route.params;
@@ -200,6 +388,41 @@ const ListScreen = ({ route, navigation }) => {
     });
   };
 
+  const clearAllIngredients = () => {
+    setError("");
+
+    const url = "https://pocketpantryapp.herokuapp.com/api/list/clearList";
+
+    let data = { UserId: userID };
+
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          if (response && response.data) {
+            setError("Shopping List Is Empty");
+            console.log(error);
+          }
+        }
+      })
+      .catch((error) => {
+        setError("Unable to find user by ID " + userID);
+        console.log(userID);
+        console.log(token);
+
+        console.log(userID._W);
+        console.log(token._W);
+
+        console.log(error);
+      });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fefae0" />
@@ -294,6 +517,12 @@ const ListScreen = ({ route, navigation }) => {
         >
           <Text style={styles.activeScreenText}>List</Text>
         </View>
+        <TouchableOpacity
+          style={{ position: "absolute", top: "60%", left: "45%" }}
+          onPress={loadShoppingList}
+        >
+          <Icon name={"refresh"} size={30} color={"black"} />
+        </TouchableOpacity>
       </View>
       <View
         style={{
@@ -338,7 +567,21 @@ const ListScreen = ({ route, navigation }) => {
               />
               <Menu.Item
                 onPress={() => {
-                  Alert.alert("Action", "Clear All");
+                  Alert.alert(
+                    "Clear All",
+                    "Are you sure you want to clear your shopping list?",
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel",
+                      },
+                      {
+                        text: "OK",
+                        onPress: clearAllIngredients,
+                      },
+                    ]
+                  );
                 }}
                 title="Clear All"
                 icon="delete"
@@ -452,14 +695,14 @@ const styles = StyleSheet.create({
   },
   otherScreenText: { fontSize: 30, fontFamily: "InriaSans_400Regular" },
   ingredientText: {
-    fontSize: 25,
+    fontSize: 20,
     marginTop: "4.25%",
     fontFamily: "InriaSans_400Regular",
   },
   amountText: {
-    fontSize: 25,
+    fontSize: 20,
     marginTop: "4.25%",
-    marginLeft: "25%",
+    marginLeft: "4%",
     fontFamily: "InriaSans_400Regular",
   },
   errorTextStyle: {
@@ -487,6 +730,18 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: "#D4D4D4",
     borderRadius: 9,
+  },
+  searchChangeInput: {
+    height: Dimensions.get("window").width * 0.125,
+    width: "60%",
+    alignSelf: "center",
+    justifyContent: "center",
+    borderWidth: 0,
+    padding: 8,
+    backgroundColor: "#D4D4D4",
+    borderRadius: 9,
+    marginTop: "4.5%",
+    marginLeft: "4%",
   },
   regularText: {
     fontFamily: "InriaSans_400Regular",
