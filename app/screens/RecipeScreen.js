@@ -26,6 +26,7 @@ import {
   ActivityIndicator,
 } from "react-native-paper";
 import { SPOONACULAR_KEY } from "@env";
+import RenderHtml from "react-native-render-html";
 
 function RecipeButton(props) {
   let name = "";
@@ -179,9 +180,20 @@ function RecipeButton(props) {
           />
         </View>
         <Text style={styles.recipeName}>{longName}</Text>
-        <Text style={styles.recipeDescription}>
-          {message == "" || message == undefined ? props.desc : message}
-        </Text>
+        {message == "" || message == undefined ? (
+          <RenderHtml
+            contentWidth={Dimensions.get("window").width * 0.81}
+            source={{
+              html: `<p style="width:${
+                Dimensions.get("window").width * 0.81
+              }px; margin-left:${Dimensions.get("window").width * 0.045}px">${
+                props.desc
+              }</p>`,
+            }}
+          />
+        ) : (
+          <Text style={styles.recipeDescription}>{message}</Text>
+        )}
       </ScrollView>
     );
   }
@@ -747,7 +759,8 @@ const RecipeScreen = ({ route, navigation }) => {
                 height: "90%",
                 alignSelf: "center",
                 borderRadius: 10,
-                marginTop: Platform.OS === "android" ? "-20%" : 0,
+                marginTop:
+                  Platform.OS === "android" ? -StatusBar.currentHeight : 0,
               }}
             >
               <View
@@ -806,7 +819,8 @@ const RecipeScreen = ({ route, navigation }) => {
                 backgroundColor: "#D4D4D4",
                 alignSelf: "center",
                 borderRadius: 10,
-                marginTop: Platform.OS === "android" ? "-20%" : 0,
+                marginTop:
+                  Platform.OS === "android" ? -StatusBar.currentHeight : 0,
                 height: 60,
                 width: Dimensions.get("window").width * 0.9,
               }}

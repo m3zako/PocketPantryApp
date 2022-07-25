@@ -986,7 +986,8 @@ const ListScreen = ({ route, navigation }) => {
                 height: "90%",
                 alignSelf: "center",
                 borderRadius: 10,
-                marginTop: Platform.OS === "android" ? "-20%" : 0,
+                marginTop:
+                  Platform.OS === "android" ? -StatusBar.currentHeight : 0,
               }}
             >
               <View
@@ -1044,7 +1045,8 @@ const ListScreen = ({ route, navigation }) => {
                 backgroundColor: "#D4D4D4",
                 alignSelf: "center",
                 borderRadius: 10,
-                marginTop: Platform.OS === "android" ? "-20%" : 0,
+                marginTop:
+                  Platform.OS === "android" ? -StatusBar.currentHeight : 0,
                 height: 60,
                 width: Dimensions.get("window").width * 0.9,
               }}
