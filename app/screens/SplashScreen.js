@@ -23,9 +23,13 @@ const SplashScreen = ({ navigation }) => {
 
     setTimeout(() => {
       if (id && tok) {
-        navigation.navigate("RecipeScreen", { userID: id, token: tok, bool: true});
+        navigation.navigate("RecipeScreen", {
+          userID: id,
+          token: tok,
+          bool: true,
+        });
       } else {
-        navigation.navigate("LoginScreen");
+        navigation.navigate("LoginScreen", { bool: false });
       }
     }, 5000);
   }, []);

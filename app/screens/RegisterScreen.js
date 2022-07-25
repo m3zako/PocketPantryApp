@@ -12,8 +12,8 @@ import { Icon } from "@rneui/themed";
 import axios from "axios";
 import { Dimensions } from "react-native";
 
-const RegisterScreen = ({ navigation }) => {
-
+const RegisterScreen = ({ route, navigation }) => {
+  let { bool } = route.params;
 
   const [First_name, setFirst] = React.useState("");
   const [Last_name, setLast] = React.useState("");
@@ -26,10 +26,7 @@ const RegisterScreen = ({ navigation }) => {
   const [emailError, setEmailError] = React.useState();
   const [error, setError] = React.useState("");
 
-
-
   const handleRegister = () => {
-
     if (!First_name) {
       setError("Please enter your first name");
       return;
@@ -52,7 +49,7 @@ const RegisterScreen = ({ navigation }) => {
       return;
     }
 
-    if(!(password && passwordAuth)){
+    if (!(password && passwordAuth)) {
       setPwdError("Please confirm password");
       return;
     }
@@ -62,7 +59,7 @@ const RegisterScreen = ({ navigation }) => {
       return;
     }
 
-    if(!(email && emailAuth)){
+    if (!(email && emailAuth)) {
       setEmailError("Please confirm email");
       return;
     }
@@ -83,7 +80,8 @@ const RegisterScreen = ({ navigation }) => {
           navigation.navigate("VerificationScreen", {
             userID: response.data._id,
             email: email,
-            token:response.data.token,
+            token: response.data.token,
+            bool: bool,
           });
         } else {
           setError("That user already exists!");
@@ -98,7 +96,7 @@ const RegisterScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Text
         style={[styles.exitText, styles.propAlign]}
-        onPress={() => navigation.navigate("LoginScreen")}
+        onPress={() => navigation.navigate("LoginScreen", { bool: bool })}
       >
         <Icon name={"arrow-back"} />
         Back

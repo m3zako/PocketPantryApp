@@ -1,6 +1,5 @@
 import { React, useState, useEffect } from "react";
 import {
-  SafeAreaView,
   Text,
   StyleSheet,
   StatusBar,
@@ -20,6 +19,7 @@ import { Menu, Provider, Portal, Modal } from "react-native-paper";
 import { Icon } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SPOONACULAR_KEY } from "@env";
+import { BookFilled } from "@ant-design/icons";
 
 function IngredientSearchResult(props) {
   let name = "";
@@ -635,9 +635,9 @@ const ListScreen = ({ route, navigation }) => {
           setAddLoading(false);
         }
       })
-      .catch((addError) => {
+      .catch((error) => {
         setAddError("");
-        console.log(addError);
+        console.log(error);
         setAddLoading(false);
       });
   };
@@ -688,9 +688,9 @@ const ListScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((addError) => {
-        setAddError(addError);
-        console.log(addError);
+      .catch((error) => {
+        setAddError("");
+        console.log(error);
       });
   };
 
@@ -744,7 +744,7 @@ const ListScreen = ({ route, navigation }) => {
   const logOut = () => {
     AsyncStorage.removeItem("user_id");
     AsyncStorage.removeItem("token");
-    navigation.navigate("LoginScreen");
+    navigation.navigate("LoginScreen", { bool: bool });
   };
 
   const renderLoader = () => {
@@ -865,6 +865,7 @@ const ListScreen = ({ route, navigation }) => {
             navigation.navigate("RecipeScreen", {
               userID: userID,
               token: token,
+              bool: bool,
             })
           }
         >
@@ -911,8 +912,7 @@ const ListScreen = ({ route, navigation }) => {
                 <TouchableOpacity
                   onPress={openMenu}
                   style={{
-                    top:
-                      Dimensions.get("window").height >= 512 ? "120%" : "65%",
+                    top: Platform.OS === "ios" ? "120%" : "85%",
                     left: "30%",
                   }}
                 >
@@ -1054,7 +1054,13 @@ const ListScreen = ({ route, navigation }) => {
                 backgroundColor: "#D4D4D4",
                 alignSelf: "center",
                 borderRadius: 10,
-                marginTop:  Platform.OS === "android" ? (bool? "-20%": -StatusBar.currentHeight) : 0,                height: 60,
+                marginTop:
+                  Platform.OS === "android"
+                    ? bool
+                      ? "-20%"
+                      : -StatusBar.currentHeight
+                    : 0,
+                height: 60,
                 width: Dimensions.get("window").width * 0.9,
               }}
             >

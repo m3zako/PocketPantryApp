@@ -9,89 +9,86 @@ import {
 import { Icon } from "@rneui/themed";
 import axios from "axios";
 
-const ResetPass = ({route, navigation}) => {
+const ResetPass = ({ route, navigation }) => {
+  let { userID, token, bool } = route.params;
 
-    let {userID, token} = route.params;
+  const [newPassword, setNewPassword] = React.useState("");
+  const [passwordAuth, setPasswordAuth] = React.useState("");
+  const [error, setError] = React.useState("");
 
-    const [newPassword, setNewPassword] = React.useState("");
-    const [passwordAuth, setPasswordAuth] = React.useState("");
-    const [error, setError] = React.useState("");
-
-    const setPass = () => {
-
-        setError("");
-        if (!newPassword) {
-          setError("Please enter your new password");
-          return;
-        }
-
-        if (newPassword !== passwordAuth) {
-            setError("Please make sure both passwords match");
-            return;
-        }
-
-        const url = "https://pocketpantryapp.herokuapp.com/api/users/resetPass";
-
-        let data = {UserId: userID, Password:newPassword};
-
-        axios
-          .post(url, data, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((response) => {
-            if (response.status === 200) {
-              navigation.navigate("LoginScreen");
-            } else {
-              setError("Invalid");
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-
+  const setPass = () => {
+    setError("");
+    if (!newPassword) {
+      setError("Please enter your new password");
+      return;
     }
 
-    return (
-      <View style={styles.container}>
-        <Text
-          style={[styles.exitText, styles.propAlign]}
-          onPress={() => navigation.navigate("LoginScreen")}
-        >
-          <Icon name={"arrow-back"} />
-          Back
-        </Text>
+    if (newPassword !== passwordAuth) {
+      setError("Please make sure both passwords match");
+      return;
+    }
 
-        <Text style={styles.header}>Reset Password</Text>
+    const url = "https://pocketpantryapp.herokuapp.com/api/users/resetPass";
 
-        <Text style={styles.mainText}>Please enter your new password</Text>
+    let data = { UserId: userID, Password: newPassword };
 
-        <TextInput
-          style={[styles.regularText, styles.input]}
-          fontSize={20}
-          placeholder="Enter new password"
-          onChangeText={(password) => setNewPassword(password)}
-        />
- 
-        <TextInput
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          navigation.navigate("LoginScreen", { bool: bool });
+        } else {
+          setError("Invalid");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text
+        style={[styles.exitText, styles.propAlign]}
+        onPress={() => navigation.navigate("LoginScreen", { bool: bool })}
+      >
+        <Icon name={"arrow-back"} />
+        Back
+      </Text>
+
+      <Text style={styles.header}>Reset Password</Text>
+
+      <Text style={styles.mainText}>Please enter your new password</Text>
+
+      <TextInput
+        style={[styles.regularText, styles.input]}
+        fontSize={20}
+        placeholder="Enter new password"
+        onChangeText={(password) => setNewPassword(password)}
+      />
+
+      <TextInput
         style={[styles.regularText, styles.input]}
         fontSize={20}
         placeholder="Confirm new password"
         onChangeText={(passwordAuth) => setPasswordAuth(passwordAuth)}
-        />
+      />
 
-        {error != "" && error != undefined ? (
-          <Text style={styles.errorTextStyle}>{error}</Text>
-        ) : null}
+      {error != "" && error != undefined ? (
+        <Text style={styles.errorTextStyle}>{error}</Text>
+      ) : null}
 
-          <TouchableOpacity onPress={setPass} style={styles.Button}>
-            <Text style={styles.bottomText} alignText="center">
-              Enter
-            </Text>
-          </TouchableOpacity>
-      </View>
-    );
+      <TouchableOpacity onPress={setPass} style={styles.Button}>
+        <Text style={styles.bottomText} alignText="center">
+          Enter
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 };
 
 export default ResetPass;
@@ -111,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     textAlign: "center",
     marginHorizontal: "5%",
-    marginTop: "5%"
+    marginTop: "5%",
   },
   propAlign: {
     marginLeft: "5%",
@@ -126,7 +123,8 @@ const styles = StyleSheet.create({
     fontFamily: "InriaSans_400Regular",
     fontSize: 22,
     textAlign: "center",
-  },  regularText: {
+  },
+  regularText: {
     fontFamily: "InriaSans_400Regular",
   },
   input: {

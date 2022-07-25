@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -7,71 +7,67 @@ import {
   View,
   TouchableOpacity,
   Dimensions,
-} from 'react-native';
+} from "react-native";
 import axios from "axios";
 
-
 const Verification = ({ route, navigation }) => {
-
-  let {userID, email, token} = route.params;
+  let { userID, email, token, bool } = route.params;
 
   const [input, setInput] = React.useState("");
   const [resend, setResend] = React.useState("");
   const [error, setError] = React.useState("");
 
-
   const Verify = () => {
-      setError("");
+    setError("");
 
-      if (!input) {
-        alert("Please enter the code you received");
-        return;
-      }
+    if (!input) {
+      alert("Please enter the code you received");
+      return;
+    }
 
-      const url = "https://pocketpantryapp.herokuapp.com/api/users/verify";
+    const url = "https://pocketpantryapp.herokuapp.com/api/users/verify";
 
-      let data = { UserId: userID, Token: input };
+    let data = { UserId: userID, Token: input };
 
-      axios
-        .post(url, data, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log(response);
-          if (response.status === 200) {
-            navigation.navigate("LoginScreen", {veri: true});
-          }
-        })
-        .catch((error) => {
-          setError("Incorrect Code");
-          setResend();
-          console.log(error);
-        });
+    axios
+      .post(url, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          navigation.navigate("LoginScreen", { veri: true, bool: bool });
+        }
+      })
+      .catch((error) => {
+        setError("Incorrect Code");
+        setResend();
+        console.log(error);
+      });
   };
 
-const resendVerification = () => {
+  const resendVerification = () => {
+    const url =
+      "https://pocketpantryapp.herokuapp.com/api/users/resendVerificationEmail";
 
-  const url = "https://pocketpantryapp.herokuapp.com/api/users/resendVerificationEmail";
+    let send = { Email: email };
 
-  let send = {Email: email}
-
-        axios
-          .post(url, send, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then(() => {
-            setResend("Email Resent!");
-            setError();
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-};
-
+    axios
+      .post(url, send, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        setResend("Email Resent!");
+        setError();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <View style={styles.container}>

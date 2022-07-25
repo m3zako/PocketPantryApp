@@ -4,7 +4,6 @@ import {
   Text,
   View,
   Image,
-  SafeAreaView,
   StatusBar,
   Platform,
   TouchableHighlight,
@@ -413,9 +412,9 @@ const RecipeScreen = ({ route, navigation }) => {
           setAddLoading(false);
         }
       })
-      .catch((addError) => {
+      .catch((error) => {
         setAddError("");
-        console.log(addError);
+        console.log(error);
         setAddLoading(false);
       });
   };
@@ -458,9 +457,9 @@ const RecipeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((addError) => {
-        setAddError(error);
-        console.log(addError);
+      .catch((error) => {
+        setAddError("");
+        console.log(error);
       });
   };
 
@@ -514,7 +513,7 @@ const RecipeScreen = ({ route, navigation }) => {
   const logOut = () => {
     AsyncStorage.removeItem("user_id");
     AsyncStorage.removeItem("token");
-    navigation.navigate("LoginScreen");
+    navigation.navigate("LoginScreen", { bool: bool });
   };
 
   const renderLoader = () => {
@@ -650,7 +649,7 @@ const RecipeScreen = ({ route, navigation }) => {
               navigation.navigate("ListScreen", {
                 userID: userID,
                 token: token,
-                bool: bool
+                bool: bool,
               })
             }
           >
@@ -685,8 +684,7 @@ const RecipeScreen = ({ route, navigation }) => {
                 <TouchableOpacity
                   onPress={openMenu}
                   style={{
-                    top:
-                      Dimensions.get("window").height >= 512 ? "120%" : "65%",
+                    top: Platform.OS === "ios" ? "120%" : "85%",
                     left: "30%",
                   }}
                 >

@@ -14,13 +14,12 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({ route, navigation }) => {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
-const [email, setEmail] = React.useState("");
-const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState();
 
-const [error, setError] = React.useState();
-
-let veri = route.params;
+  let { bool, veri } = route.params;
 
   const handleLogin = () => {
     setError("");
@@ -53,17 +52,17 @@ let veri = route.params;
             AsyncStorage.setItem("token", response.data.token);
 
             navigation.navigate("RecipeScreen", {
-            userID: response.data._id,
-            token: response.data.token,
-          });
-          }
-          else{
+              userID: response.data._id,
+              token: response.data.token,
+              bool: bool,
+            });
+          } else {
             navigation.navigate("VerificationScreen", {
               userID: response.data._id,
               token: response.data.token,
+              bool: bool,
             });
           }
-
         }
       })
       .catch((error) => {
@@ -94,8 +93,13 @@ let veri = route.params;
         onChangeText={(password) => setPassword(password)}
       />
 
-      <TouchableOpacity onPress={() => navigation.navigate("ForgotScreen")}>
-        <Text style={[styles.regularText, styles.leftAlign, styles.line]} fontSize={16}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("ForgotScreen", { bool: bool })}
+      >
+        <Text
+          style={[styles.regularText, styles.leftAlign, styles.line]}
+          fontSize={16}
+        >
           Forgot password?
         </Text>
       </TouchableOpacity>
@@ -113,7 +117,9 @@ let veri = route.params;
 
         <Text style={styles.regularText}>Don't have an account?</Text>
 
-        <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("RegisterScreen", { bool: bool })}
+        >
           <Text style={[styles.regularText, styles.line]}>Register</Text>
         </TouchableOpacity>
       </View>

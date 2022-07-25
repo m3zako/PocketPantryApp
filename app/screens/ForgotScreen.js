@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   StyleSheet,
   View,
@@ -9,150 +9,145 @@ import {
 import { Icon } from "@rneui/themed";
 import axios from "axios";
 
+const ForgotScreen = ({ route, navigation }) => {
+  let { bool } = route.params;
 
-const ForgotScreen = ({navigation}) => {
+  const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
 
-    const [email, setEmail] = React.useState("");
-    const [emailError, setEmailError] = React.useState("");
+  const [tok, setTok] = React.useState("");
+  const [id, setID] = React.useState("");
 
-    const [tok, setTok] = React.useState("");
-    const [id, setID] = React.useState("");
+  const [code, setCode] = React.useState("");
+  const [codeError, setCodeError] = React.useState("");
 
-    const [code, setCode] = React.useState("");
-    const [codeError, setCodeError] = React.useState("");
+  const [display, setDisplay] = React.useState(false);
 
-    const [display, setDisplay] = React.useState(false);
+  const showEmail = () => {
+    setEmailError("");
+    if (!email) {
+      setEmailError("Please enter your email");
+      return;
+    }
 
-    const showEmail = () => {
-        setEmailError("");
-        if (!email) {
-            setEmailError("Please enter your email");
-            return;
+    const url =
+      "https://pocketpantryapp.herokuapp.com/api/users/sendResetPassEmail";
+
+    let data = { Email: email };
+
+    axios
+      .post(url, data)
+      .then((response) => {
+        console.log(response);
+        if (response.status === 201) {
+          setDisplay(true);
+          setID(response.data.UserId);
+          setTok(response.data.Token);
+        } else {
+          setEmailError("Incorrect Email");
         }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-        const url = "https://pocketpantryapp.herokuapp.com/api/users/sendResetPassEmail";
+  const changePass = () => {
+    setCodeError("");
 
-        let data = {Email: email}
+    if (!code) {
+      setCodeError("Please enter the code");
+      return;
+    }
 
-        axios
-          .post(url, data)
-          .then((response) => {
-            console.log(response);
-            if(response.status === 201){
-                setDisplay(true);
-                setID(response.data.UserId);
-                setTok(response.data.Token);
-            }else{
-                setEmailError("Incorrect Email");
-            }
-          })
-          .catch((error) => {
-            console.log(error);
+    const url =
+      "https://pocketpantryapp.herokuapp.com/api/users/verifyPassToken";
+
+    let data2 = { UserId: id, Token: code };
+
+    axios
+      .post(url, data2, {
+        headers: {
+          Authorization: `Bearer ${tok}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          navigation.navigate("ResetPass", {
+            userID: id,
+            token: tok,
+            bool: bool,
           });
-
-    }
-
-    const changePass = () => {
-        setCodeError("");
-
-        if(!code){
-            setCodeError("Please enter the code");
-            return;
+        } else {
+          setCodeError("Invalid code");
         }
+      })
+      .catch((error) => {
+        console.log(data2);
+        console.log(error);
+      });
+  };
 
-        const url = "https://pocketpantryapp.herokuapp.com/api/users/verifyPassToken";
+  return (
+    <View style={styles.container}>
+      <Text
+        style={[styles.exitText, styles.propAlign]}
+        onPress={() => navigation.navigate("LoginScreen", { bool: bool })}
+      >
+        <Icon name={"arrow-back"} />
+        Back
+      </Text>
 
-        let data2 = {UserId: id, Token: code};
+      <Text style={styles.header}>Reset Password</Text>
 
-        axios
-            .post(url, data2, {
-          headers: {
-            Authorization: `Bearer ${tok}`,
-          },
-        }).then((response) =>{
-            console.log(response);
-            if(response.status === 200){
-                navigation.navigate("ResetPass", {
-                  userID: id,
-                  token: tok,
-                });
-            }
-            else{
-                setCodeError("Invalid code");
-            }
-        })
-        .catch((error) => {
-            console.log(data2);
-            console.log(error);
-        });
-        
-    }
+      <Text style={styles.mainText}>Please enter your email</Text>
 
-    return (
-      <View style={styles.container}>
-        <Text
-          style={[styles.exitText, styles.propAlign]}
-          onPress={() => navigation.navigate("LoginScreen")}
-        >
-          <Icon name={"arrow-back"} />
-          Back
+      <TextInput
+        style={[styles.regularText, styles.input]}
+        fontSize={20}
+        placeholder="Enter email"
+        onChangeText={(email) => setEmail(email)}
+      />
+
+      {emailError != "" && emailError != undefined ? (
+        <Text style={styles.errorTextStyle}>{emailError}</Text>
+      ) : null}
+
+      <TouchableOpacity onPress={showEmail} style={styles.Button}>
+        <Text style={styles.bottomText} alignText="center">
+          Enter
         </Text>
+      </TouchableOpacity>
 
-        <Text style={styles.header}>Reset Password</Text>
+      {display ? (
+        <Text style={styles.mainText}>
+          Please enter the code sent to your email
+        </Text>
+      ) : null}
 
-        <Text style={styles.mainText}>Please enter your email</Text>
-
+      {display ? (
         <TextInput
           style={[styles.regularText, styles.input]}
           fontSize={20}
-          placeholder="Enter email"
-          onChangeText={(email) => setEmail(email)}
+          placeholder="Enter code"
+          onChangeText={(code) => setCode(code)}
         />
+      ) : null}
 
-        {emailError != "" && emailError != undefined ? (
-          <Text style={styles.errorTextStyle}>{emailError}</Text>
-        ) : null}
+      {codeError != "" && codeError != undefined ? (
+        <Text style={styles.errorTextStyle}>{codeError}</Text>
+      ) : null}
 
-        <TouchableOpacity
-          onPress={showEmail}
-          style={styles.Button}
-        >
+      {display ? (
+        <TouchableOpacity onPress={changePass} style={styles.Button}>
           <Text style={styles.bottomText} alignText="center">
             Enter
           </Text>
         </TouchableOpacity>
-
-        {display ? (
-          <Text style={styles.mainText}>
-            Please enter the code sent to your email
-          </Text>
-        ) : null}
-
-        {display ? (
-          <TextInput
-            style={[styles.regularText, styles.input]}
-            fontSize={20}
-            placeholder="Enter code"
-            onChangeText={(code) => setCode(code)}
-          />
-        ) : null}
-
-        {codeError != "" && codeError != undefined ? (
-          <Text style={styles.errorTextStyle}>{codeError}</Text>
-        ) : null}
-
-        {display ? (
-          <TouchableOpacity
-            onPress={changePass}
-            style={styles.Button}
-          >
-            <Text style={styles.bottomText} alignText="center">
-              Enter
-            </Text>
-          </TouchableOpacity>
-        ) : null}
-      </View>
-    );
+      ) : null}
+    </View>
+  );
 };
 
 export default ForgotScreen;
