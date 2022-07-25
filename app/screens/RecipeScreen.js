@@ -118,6 +118,7 @@ function RecipeButton(props) {
           flexGrow: 1,
           paddingBottom: props.desc.length / 25,
         }}
+        nestedScrollEnabled
       >
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
