@@ -116,7 +116,7 @@ function RecipeButton(props) {
         style={styles.recipeButtonOpen}
         contentContainerStyle={{
           flexGrow: 1,
-          //paddingBottom: props.desc.length / 50,
+          paddingBottom: props.desc.length / 25,
         }}
       >
         <View style={{ flexDirection: "row" }}>
@@ -880,8 +880,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: "InriaSans_700Bold",
     textDecorationLine: "underline",
-    marginLeft: "0%",
-    textAlign: "center",
+    marginLeft: "5%",
+    marginTop: "2.5%",
   },
   recipeDescription: {
     fontSize: 15,
@@ -889,7 +889,6 @@ const styles = StyleSheet.create({
     marginLeft: "5%",
     marginTop: "2.5%",
     width: "90%",
-    textAlign: "center",
   },
   activeScreenText: {
     fontSize: 30,
