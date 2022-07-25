@@ -408,20 +408,10 @@ const RecipeScreen = ({ route, navigation }) => {
       });
   };
 
-  function onlySpaces(str) {
-    return str.trim().length === 0;
-  }
-
   const searchAddRecipes = () => {
     setAddError("");
     setOffset(0);
     setAddRecipes([]);
-
-    if (onlySpaces(addSearch)) {
-      setAddError("Please Enter A Valid Search Query");
-      console.log(addError);
-      return;
-    }
 
     let query = addSearch.trim();
 
