@@ -511,9 +511,7 @@ const RecipeScreen = ({ route, navigation }) => {
   const logOut = () => {
     AsyncStorage.removeItem("user_id");
     AsyncStorage.removeItem("token");
-    navigation.navigate("LoginScreen", {
-      veri: false,
-    });
+    navigation.navigate("LoginScreen");
   };
 
   const renderLoader = () => {

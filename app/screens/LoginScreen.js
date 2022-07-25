@@ -14,21 +14,23 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({ route, navigation }) => {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState();
 
-  let { veri } = route.params;
+const [email, setEmail] = React.useState("");
+const [password, setPassword] = React.useState("");
+
+const [error, setError] = React.useState();
+
+let veri = route.params;
 
   const handleLogin = () => {
     setError("");
-    veri = false;
+    veri = null;
     if (!email) {
-      alert("Please enter your email");
+      setError("Please enter your email");
       return;
     }
     if (!password) {
-      alert("Please enter your password");
+      setError("Please enter your password");
       return;
     }
 
@@ -85,8 +87,8 @@ const LoginScreen = ({ route, navigation }) => {
         onChangeText={(password) => setPassword(password)}
       />
 
-      <TouchableOpacity onPress={() => console.log("Forgot Password Pressed")}>
-        <Text style={[styles.regularText, styles.leftAlign]} fontSize={16}>
+      <TouchableOpacity onPress={() => navigation.navigate("ForgotScreen")}>
+        <Text style={[styles.regularText, styles.leftAlign, styles.line]} fontSize={16}>
           Forgot password?
         </Text>
       </TouchableOpacity>
@@ -105,7 +107,7 @@ const LoginScreen = ({ route, navigation }) => {
         <Text style={styles.regularText}>Don't have an account?</Text>
 
         <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
-          <Text style={styles.regularText}>Register</Text>
+          <Text style={[styles.regularText, styles.line]}>Register</Text>
         </TouchableOpacity>
       </View>
 
@@ -178,6 +180,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "InriaSana_700Bold",
     fontSize: 22,
+  },
+  line: {
+    textDecorationLine: "underline",
   },
 });
 

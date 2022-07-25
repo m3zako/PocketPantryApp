@@ -17,7 +17,7 @@ const Verification = ({ route, navigation }) => {
 
   const [input, setInput] = React.useState("");
   const [resend, setResend] = React.useState("");
-  const [error, setError] = React.useState();
+  const [error, setError] = React.useState("");
 
 
   const Verify = () => {
@@ -41,11 +41,12 @@ const Verification = ({ route, navigation }) => {
         .then((response) => {
           console.log(response);
           if (response.status === 200) {
-            navigation.navigate("LoginScreen", { veri: true });
+            navigation.navigate("LoginScreen", {veri: true});
           }
         })
         .catch((error) => {
           setError("Incorrect Code");
+          setResend();
           console.log(error);
         });
   };
@@ -64,6 +65,7 @@ const resendVerification = () => {
           })
           .then((response) => {
             setResend("Email Resent!");
+            setError();
           })
           .catch((error) => {
             console.log(error);
@@ -83,7 +85,7 @@ const resendVerification = () => {
       </Text>
 
       <TextInput
-        style={[styles.regularText, styles.input]}
+        style={styles.input}
         fontSize={20}
         placeholder="Enter Code"
         onChangeText={(input) => setInput(input)}
@@ -104,7 +106,7 @@ const resendVerification = () => {
       </Text>
 
       <TouchableOpacity onPress={resendVerification}>
-        <Text style={styles.bottomText} color="purple">Send Again</Text>
+        <Text style={[styles.bottomText, styles.textLink]}>Send Again</Text>
       </TouchableOpacity>
 
       {resend != "" && resend != undefined ? (
@@ -178,6 +180,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "InriaSana_700Bold",
     fontSize: 22,
+  },
+  textLink: {
+    textDecorationLine: "underline",
+    color: "#0645AD",
   },
 });
 

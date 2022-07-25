@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
 } from "react-native";
-
+import { Icon } from "@rneui/themed";
 import axios from "axios";
 import { Dimensions } from "react-native";
 
@@ -21,6 +21,7 @@ const RegisterScreen = ({ navigation }) => {
   const [password, setPassword] = React.useState("");
   const [emailAuth, setEmailAuth] = React.useState("");
   const [passwordAuth, setPasswordAuth] = React.useState("");
+
   const [pwdError, setPwdError] = React.useState();
   const [emailError, setEmailError] = React.useState();
   const [error, setError] = React.useState("");
@@ -28,23 +29,21 @@ const RegisterScreen = ({ navigation }) => {
 
 
   const handleRegister = () => {
-    setPwdError("");
-    setEmailError("");
 
     if (!First_name) {
-      alert("Please enter your first name");
+      setError("Please enter your first name");
       return;
     }
     if (!Last_name) {
-      alert("Please enter your last name");
+      setError("Please enter your last name");
       return;
     }
     if (!email) {
-      alert("Please enter your email");
+      setError("Please enter your email");
       return;
     }
     if (!password) {
-      alert("Please enter your password");
+      setError("Please enter your password");
       return;
     }
 
@@ -53,8 +52,18 @@ const RegisterScreen = ({ navigation }) => {
       return;
     }
 
+    if(!(password && passwordAuth)){
+      setPwdError("Please confirm password");
+      return;
+    }
+
     if (email !== emailAuth) {
       setEmailError("Please make sure both emails match");
+      return;
+    }
+
+    if(!(email && emailAuth)){
+      setEmailError("Please confirm email");
       return;
     }
 
@@ -71,6 +80,7 @@ const RegisterScreen = ({ navigation }) => {
       .post(url, data)
       .then((response) => {
         if (response.status === 201) {
+          console.log(response);
           navigation.navigate("VerificationScreen", {
             userID: response.data._id,
             email: email,
@@ -87,6 +97,14 @@ const RegisterScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Text
+        style={[styles.exitText, styles.propAlign]}
+        onPress={() => navigation.navigate("LoginScreen")}
+      >
+        <Icon name={"arrow-back"} />
+        Back
+      </Text>
+
       <Text style={[styles.headerText, styles.leftAlign]}>Register</Text>
 
       <KeyboardAvoidingView enabled>
@@ -143,7 +161,7 @@ const RegisterScreen = ({ navigation }) => {
         ) : null}
 
         {error != "" && error != undefined ? (
-          <Text style={styles.errorTextStyle}>{pwdError}</Text>
+          <Text style={styles.errorTextStyle}>{error}</Text>
         ) : null}
 
         <View style={styles.centerAlign}>
@@ -170,7 +188,6 @@ const styles = StyleSheet.create({
   headerText: {
     fontFamily: "InriaSans_700Bold",
     fontSize: 40,
-    marginTop: "15%",
   },
   regularText: {
     fontFamily: "InriaSans_400Regular",
@@ -181,6 +198,14 @@ const styles = StyleSheet.create({
   },
   centerAlign: {
     alignItems: "center",
+  },
+  propAlign: {
+    marginLeft: "5%",
+    marginTop: "15%",
+  },
+  exitText: {
+    fontFamily: "InriaSans_700Bold",
+    fontSize: 24,
   },
   input: {
     height: Dimensions.get("window").height >= 800 ? 60 : "7.5%",

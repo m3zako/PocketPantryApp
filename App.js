@@ -3,9 +3,11 @@ import { React, useState } from 'react';
 import RecipeScreen from './app/screens/RecipeScreen';
 import ListScreen from './app/screens/ListScreen';
 import LoginScreen from './app/screens/LoginScreen';
+import ForgotScreen from './app/screens/ForgotScreen';
 import RegisterScreen from './app/screens/RegisterScreen';
 import SplashScreen from './app/screens/SplashScreen';
 import Verification from "./app/screens/Verification";
+import ResetPass from "./app/screens/ResetPass";
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -40,7 +42,9 @@ export default function App() {
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
+        <Stack.Screen name="ResetPass" component={ResetPass} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="ForgotScreen" component={ForgotScreen} />
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         <Stack.Screen name="VerificationScreen" component={Verification} />
         <Stack.Screen name="RecipeScreen" component={RecipeScreen} />
