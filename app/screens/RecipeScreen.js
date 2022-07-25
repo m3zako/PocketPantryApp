@@ -290,7 +290,7 @@ function RecipeSearchResult(props) {
 }
 
 const RecipeScreen = ({ route, navigation }) => {
-  let { userID, token } = route.params;
+  let { userID, token, bool } = route.params;
 
   const [recipes, setRecipes] = useState([]);
   const [addRecipes, setAddRecipes] = useState([]);
@@ -576,7 +576,8 @@ const RecipeScreen = ({ route, navigation }) => {
             fontFamily: "InriaSans_700Bold",
             fontSize: 42,
             marginLeft: "5%",
-            marginTop: (Dimensions.get("window").height >= 512) ? "12.5%" : "8.5%",
+            marginTop:
+              Dimensions.get("window").height >= 512 ? "12.5%" : "8.5%",
           }}
         >
           Recipes
@@ -649,6 +650,7 @@ const RecipeScreen = ({ route, navigation }) => {
               navigation.navigate("ListScreen", {
                 userID: userID,
                 token: token,
+                bool: bool
               })
             }
           >
@@ -682,8 +684,11 @@ const RecipeScreen = ({ route, navigation }) => {
               anchor={
                 <TouchableOpacity
                   onPress={openMenu}
-                  style={{ top: (Dimensions.get("window").height >= 512) ? "120%" : "65%",
-                   left: "30%" }}
+                  style={{
+                    top:
+                      Dimensions.get("window").height >= 512 ? "120%" : "65%",
+                    left: "30%",
+                  }}
                 >
                   <Icon name={"menu"} size={50} color={"black"} />
                 </TouchableOpacity>
@@ -761,7 +766,11 @@ const RecipeScreen = ({ route, navigation }) => {
                 alignSelf: "center",
                 borderRadius: 10,
                 marginTop:
-                  Platform.OS === "android" ? "-20%" : 0,
+                  Platform.OS === "android"
+                    ? bool
+                      ? "-20%"
+                      : -StatusBar.currentHeight
+                    : 0,
               }}
             >
               <View
@@ -821,7 +830,11 @@ const RecipeScreen = ({ route, navigation }) => {
                 alignSelf: "center",
                 borderRadius: 10,
                 marginTop:
-                  Platform.OS === "android" ? "-20%" : 0,
+                  Platform.OS === "android"
+                    ? bool
+                      ? "-20%"
+                      : -StatusBar.currentHeight
+                    : 0,
                 height: 60,
                 width: Dimensions.get("window").width * 0.9,
               }}

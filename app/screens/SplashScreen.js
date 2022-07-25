@@ -23,7 +23,7 @@ const SplashScreen = ({ navigation }) => {
 
     setTimeout(() => {
       if (id && tok) {
-        navigation.navigate("RecipeScreen", { userID: id, token: tok});
+        navigation.navigate("RecipeScreen", { userID: id, token: tok, bool: true});
       } else {
         navigation.navigate("LoginScreen");
       }

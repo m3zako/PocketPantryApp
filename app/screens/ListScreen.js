@@ -512,7 +512,7 @@ function ShoppingCheckBoxListEntry(props) {
   }
 }
 const ListScreen = ({ route, navigation }) => {
-  let { userID, token } = route.params;
+  let { userID, token, bool } = route.params;
 
   const [shopList, setShopList] = useState([]);
   const [addIngredients, setAddIngredients] = useState([]);
@@ -805,7 +805,8 @@ const ListScreen = ({ route, navigation }) => {
             fontFamily: "InriaSans_700Bold",
             fontSize: 42,
             marginLeft: "5%",
-            marginTop: Dimensions.get("window").height >= 512 ? "12.5%" : "8.5%",
+            marginTop:
+              Dimensions.get("window").height >= 512 ? "12.5%" : "8.5%",
           }}
         >
           Shopping List
@@ -910,7 +911,8 @@ const ListScreen = ({ route, navigation }) => {
                 <TouchableOpacity
                   onPress={openMenu}
                   style={{
-                    top: (Dimensions.get("window").height >= 512) ? "120%" : "65%",
+                    top:
+                      Dimensions.get("window").height >= 512 ? "120%" : "65%",
                     left: "30%",
                   }}
                 >
@@ -990,7 +992,11 @@ const ListScreen = ({ route, navigation }) => {
                 alignSelf: "center",
                 borderRadius: 10,
                 marginTop:
-                  Platform.OS === "android" ? "-20%" : 0,
+                  Platform.OS === "android"
+                    ? bool
+                      ? "-20%"
+                      : -StatusBar.currentHeight
+                    : 0,
               }}
             >
               <View
@@ -1048,9 +1054,7 @@ const ListScreen = ({ route, navigation }) => {
                 backgroundColor: "#D4D4D4",
                 alignSelf: "center",
                 borderRadius: 10,
-                marginTop:
-                  Platform.OS === "android" ? "-20%" : 0,
-                height: 60,
+                marginTop:  Platform.OS === "android" ? (bool? "-20%": -StatusBar.currentHeight) : 0,                height: 60,
                 width: Dimensions.get("window").width * 0.9,
               }}
             >
