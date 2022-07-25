@@ -63,7 +63,7 @@ const resendVerification = () => {
               Authorization: `Bearer ${token}`,
             },
           })
-          .then((response) => {
+          .then(() => {
             setResend("Email Resent!");
             setError();
           })

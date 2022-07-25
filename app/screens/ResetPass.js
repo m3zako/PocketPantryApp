@@ -41,7 +41,6 @@ const ResetPass = ({route, navigation}) => {
             },
           })
           .then((response) => {
-            console.log(response);
             if (response.status === 200) {
               navigation.navigate("LoginScreen");
             } else {
@@ -49,7 +48,6 @@ const ResetPass = ({route, navigation}) => {
             }
           })
           .catch((error) => {
-            console.log(data);
             console.log(error);
           });
 

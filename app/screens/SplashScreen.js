@@ -19,11 +19,11 @@ getAsyncs = async () => {
 
 const SplashScreen = ({ navigation }) => {
   useEffect(() => {
-    //getAsyncs();
+    getAsyncs();
 
     setTimeout(() => {
       if (id && tok) {
-        navigation.navigate("RecipeScreen", { userID: id, token: tok });
+        navigation.navigate("RecipeScreen", { userID: id, token: tok});
       } else {
         navigation.navigate("LoginScreen");
       }

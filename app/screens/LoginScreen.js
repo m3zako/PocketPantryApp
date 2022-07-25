@@ -45,18 +45,25 @@ let veri = route.params;
 
         if (response.status === 200) {
           if (
-            response &&
-            response.data &&
+            response.data.Verified &&
             response.data._id &&
             response.data.token
           ) {
             AsyncStorage.setItem("user_id", response.data._id);
             AsyncStorage.setItem("token", response.data.token);
-          }
-          navigation.navigate("RecipeScreen", {
+
+            navigation.navigate("RecipeScreen", {
             userID: response.data._id,
             token: response.data.token,
           });
+          }
+          else{
+            navigation.navigate("VerificationScreen", {
+              userID: response.data._id,
+              token: response.data.token,
+            });
+          }
+
         }
       })
       .catch((error) => {

@@ -791,7 +791,7 @@ const ListScreen = ({ route, navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fefae0" />
       <View
         style={{
@@ -803,9 +803,9 @@ const ListScreen = ({ route, navigation }) => {
         <Text
           style={{
             fontFamily: "InriaSans_700Bold",
-            fontSize: 40,
+            fontSize: 42,
             marginLeft: "5%",
-            marginTop: "10%",
+            marginTop: Dimensions.get("window").height >= 512 ? "12.5%" : "8.5%",
           }}
         >
           Shopping List
@@ -897,7 +897,7 @@ const ListScreen = ({ route, navigation }) => {
           height:
             Platform.OS === "android"
               ? Dimensions.get("window").height + StatusBar.currentHeight
-              : "100%",
+              : "83.5%",
           width: "100%",
         }}
       >
@@ -909,7 +909,10 @@ const ListScreen = ({ route, navigation }) => {
               anchor={
                 <TouchableOpacity
                   onPress={openMenu}
-                  style={{ top: "65%", left: "30%" }}
+                  style={{
+                    top: (Dimensions.get("window").height >= 512) ? "120%" : "65%",
+                    left: "30%",
+                  }}
                 >
                   <Icon name={"menu"} size={50} color={"black"} />
                 </TouchableOpacity>
@@ -987,7 +990,7 @@ const ListScreen = ({ route, navigation }) => {
                 alignSelf: "center",
                 borderRadius: 10,
                 marginTop:
-                  Platform.OS === "android" ? -StatusBar.currentHeight : 0,
+                  Platform.OS === "android" ? "-20%" : 0,
               }}
             >
               <View
@@ -1046,7 +1049,7 @@ const ListScreen = ({ route, navigation }) => {
                 alignSelf: "center",
                 borderRadius: 10,
                 marginTop:
-                  Platform.OS === "android" ? -StatusBar.currentHeight : 0,
+                  Platform.OS === "android" ? "-20%" : 0,
                 height: 60,
                 width: Dimensions.get("window").width * 0.9,
               }}
@@ -1071,7 +1074,7 @@ const ListScreen = ({ route, navigation }) => {
           </Portal>
         </Provider>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

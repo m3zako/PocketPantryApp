@@ -80,7 +80,6 @@ const RegisterScreen = ({ navigation }) => {
       .post(url, data)
       .then((response) => {
         if (response.status === 201) {
-          console.log(response);
           navigation.navigate("VerificationScreen", {
             userID: response.data._id,
             email: email,
