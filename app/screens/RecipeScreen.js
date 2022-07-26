@@ -671,9 +671,10 @@ const RecipeScreen = ({ route, navigation }) => {
           height:
             Platform.OS === "android"
               ? Dimensions.get("window").height + StatusBar.currentHeight
-              : "83.5%",
+              : Dimensions.get("window").height,
           width: "100%",
         }}
+        pointerEvents={"box-none"}
       >
         <Provider>
           <View>

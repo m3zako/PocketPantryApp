@@ -19,7 +19,6 @@ import { Menu, Provider, Portal, Modal } from "react-native-paper";
 import { Icon } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SPOONACULAR_KEY } from "@env";
-import { BookFilled } from "@ant-design/icons";
 
 function IngredientSearchResult(props) {
   let name = "";
@@ -122,7 +121,11 @@ function IngredientSearchResult(props) {
     setMessage("");
     setChangeAmount("");
     getIngInfo();
-    setUnitMessage("How many " + ingUnit + "s?");
+    if (ingUnit.charAt(ingUnit.length - 1) == "s") {
+      setUnitMessage("How many " + ingUnit + "?");
+    } else {
+      setUnitMessage("How many " + ingUnit + "s?");
+    }
     if (ingUnit != "" && ingUnit != undefined) {
       toggleUnitPrompt(true);
     } else {
@@ -228,10 +231,11 @@ function ShoppingCheckBoxListEntry(props) {
   let fillerAmount = testString.length - props.name.length;
   let unitName = props.unit;
   let amountName = props.amount;
-  let unitMessage = "How many " + props.unit + "s?";
-  if (props.amount > 1) {
-    unitName = unitName + "s";
+  if (unitName.charAt(unitName.length - 1) == "s") {
+    unitName = unitName.substring(0, unitName.length - 1);
   }
+
+  let unitMessage = "How many " + unitName + "s?";
 
   for (i = 0; i < fillerAmount; i++) {
     fillerString = fillerString + "  ";
@@ -283,7 +287,7 @@ function ShoppingCheckBoxListEntry(props) {
 
   const addItem = () => {
     setMessage("");
-    let amountToChange = parseFloat(props.amount);
+    let amountToChange = parseFloat(changeAmount);
     const url = "https://pocketpantryapp.herokuapp.com/api/list/addIngredient";
     let data = {
       UserId: props.uID,
@@ -414,6 +418,7 @@ function ShoppingCheckBoxListEntry(props) {
           <Text style={styles.ingredientText}>{ingName}</Text>
           <Text style={styles.amountText}>
             {amountName} {unitName}
+            {parseFloat(amountName) > 1 ? "s" : ""}
           </Text>
           <TouchableOpacity
             style={{
@@ -480,7 +485,9 @@ function ShoppingCheckBoxListEntry(props) {
             onPress={() =>
               Alert.alert(
                 `Remove ${props.name}`,
-                `Are you sure you want to remove ${changeAmount} ${props.unit} of ${props.name} from your shopping list?`,
+                `Are you sure you want to remove ${changeAmount} ${unitName}${
+                  parseFloat(changeAmount) > 1 ? "s" : ""
+                } of ${props.name} from your shopping list?`,
                 [
                   {
                     text: "Cancel",
@@ -899,9 +906,10 @@ const ListScreen = ({ route, navigation }) => {
           height:
             Platform.OS === "android"
               ? Dimensions.get("window").height + StatusBar.currentHeight
-              : "83.5%",
+              : Dimensions.get("window").height,
           width: "100%",
         }}
+        pointerEvents={"box-none"}
       >
         <Provider>
           <View>
